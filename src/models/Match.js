@@ -110,6 +110,26 @@ const inningsSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    targetRuns: {
+      type: Number,
+      default: null,
+    },
+    currentStriker: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Player",
+    },
+    currentNonStriker: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Player",
+    },
+    currentBowler: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Player",
+    },
+    isCompleted: {
+      type: Boolean,
+      default: false,
+    },
     totalRuns: {
       type: Number,
       default: 0,

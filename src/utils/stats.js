@@ -14,6 +14,21 @@ const calculateBowlingAverage = (runsConceded, wickets) => {
   return Number((runsConceded / wickets).toFixed(2));
 };
 
+const normalizeDelivery = (delivery = {}) => {
+  const runsBat = Number(delivery.runsBat || 0);
+  const extras = Number(delivery.extras || 0);
+
+  return {
+    ...delivery,
+    runsBat,
+    extras,
+    totalRuns:
+      delivery.totalRuns == null ? runsBat + extras : Number(delivery.totalRuns),
+    extrasType: delivery.extrasType || "none",
+    isWicket: Boolean(delivery.isWicket),
+  };
+};
+
 const getLegalDeliveryCount = (deliveries = []) =>
   deliveries.filter(
     (delivery) => !["wide", "no-ball"].includes(delivery.extrasType || "none")
@@ -24,9 +39,9 @@ const summarizeInnings = (innings = {}) => {
 
   const totals = overs.reduce(
     (summary, over) => {
-      const deliveries = over.deliveries || [];
+      const deliveries = (over.deliveries || []).map(normalizeDelivery);
       const overRuns = deliveries.reduce(
-        (sum, delivery) => sum + (delivery.totalRuns ?? delivery.runsBat ?? 0) + (delivery.totalRuns == null ? (delivery.extras || 0) : 0),
+        (sum, delivery) => sum + delivery.totalRuns,
         0
       );
       const legalBalls = getLegalDeliveryCount(deliveries);
@@ -78,9 +93,31 @@ const summarizeMatchTotals = (inningsList = []) => {
   };
 };
 
+const getNextBallInOver = (deliveries = []) => {
+  const legalBalls = getLegalDeliveryCount(deliveries);
+  return legalBalls + 1;
+};
+
+const upsertOver = (overs = [], overNumber) => {
+  let over = overs.find((currentOver) => currentOver.overNumber === overNumber);
+
+  if (!over) {
+    over = {
+      overNumber,
+      deliveries: [],
+    };
+    overs.push(over);
+  }
+
+  return over;
+};
+
 module.exports = {
   calculateStrikeRate,
   calculateBowlingAverage,
+  normalizeDelivery,
   summarizeInnings,
   summarizeMatchTotals,
+  getNextBallInOver,
+  upsertOver,
 };

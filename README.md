@@ -16,6 +16,13 @@ SPORTLYTICS is a grassroots sports analytics and management platform focused on 
 - Scorecard-ready cricket match structure
 - Automatic innings and match total calculation
 
+## Day 3 Scope
+
+- Live scoring endpoints for scorers
+- Single-ball entry workflow
+- Running innings scoreboard updates
+- Innings completion flow
+
 ## Project Structure
 
 ```text
@@ -36,6 +43,7 @@ src/
 ```bash
 npm install express mongoose dotenv cors
 npm install -D nodemon
+npm install --prefix frontend
 ```
 
 2. Create environment file:
@@ -54,6 +62,14 @@ npm run dev
 
 If MongoDB is not running yet, set `SKIP_DB=true` in `.env` for a quick API boot test.
 
+5. Run the frontend in a second terminal:
+
+```bash
+npm run dev --prefix frontend
+```
+
+Frontend URL: `http://localhost:5173`
+
 ## API Endpoints
 
 - `GET /api/health`
@@ -63,6 +79,17 @@ If MongoDB is not running yet, set `SKIP_DB=true` in `.env` for a quick API boot
 - `GET /api/matches`
 - `GET /api/matches/:id`
 - `POST /api/matches/:id/innings`
+- `POST /api/matches/:id/innings/start`
+- `POST /api/matches/:id/innings/:inningsId/deliveries`
+- `PATCH /api/matches/:id/innings/:inningsId/complete`
+
+## Frontend Pages
+
+- `/` dashboard
+- `/tournaments` tournament creation and listing
+- `/matches` match scheduling and list
+- `/scorer` live scoring controls
+- `/matches/:matchId` live scoreboard view
 - `POST /api/tournaments`
 - `GET /api/tournaments`
 
@@ -130,5 +157,37 @@ If MongoDB is not running yet, set `SKIP_DB=true` in `.env` for a quick API boot
       ]
     }
   ]
+}
+```
+
+## Example Start Innings Payload
+
+```json
+{
+  "inningsNumber": 1,
+  "battingTeam": "Rising Stars",
+  "bowlingTeam": "Thunder XI",
+  "targetRuns": null
+}
+```
+
+## Example Add Delivery Payload
+
+```json
+{
+  "overNumber": 1,
+  "runsBat": 4,
+  "extras": 0,
+  "extrasType": "none",
+  "isWicket": false,
+  "commentary": "Driven through covers for four"
+}
+```
+
+## Example Complete Innings Payload
+
+```json
+{
+  "matchCompleted": false
 }
 ```
