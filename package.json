@@ -1,0 +1,33 @@
+{
+  "name": "sportlytics",
+  "version": "1.0.0",
+  "description": "Grassroots sports analytics and management platform",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rajommkar/Sportlytics.git"
+  },
+  "keywords": [
+    "sports",
+    "analytics",
+    "express",
+    "mongodb"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Rajommkar/Sportlytics/issues"
+  },
+  "homepage": "https://github.com/Rajommkar/Sportlytics#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.0",
+    "express": "^5.2.1",
+    "mongoose": "^9.3.3"
+  }
+}
