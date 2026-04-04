@@ -75,6 +75,8 @@ Frontend URL: `http://localhost:5173`
 - `GET /api/health`
 - `POST /api/players`
 - `GET /api/players`
+- `POST /api/tournaments`
+- `GET /api/tournaments`
 - `POST /api/matches`
 - `GET /api/matches`
 - `GET /api/matches/:id`
@@ -85,13 +87,12 @@ Frontend URL: `http://localhost:5173`
 
 ## Frontend Pages
 
-- `/` dashboard
+- `/` landing page
+- `/dashboard` internal dashboard
 - `/tournaments` tournament creation and listing
 - `/matches` match scheduling and list
 - `/scorer` live scoring controls
 - `/matches/:matchId` live scoreboard view
-- `POST /api/tournaments`
-- `GET /api/tournaments`
 
 ## Example Player Payload
 
