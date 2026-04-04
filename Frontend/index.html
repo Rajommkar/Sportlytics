@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sportlytics | Kinetic Precision</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#171f33",
+                        "on-primary-container": "#009365",
+                        "on-tertiary-container": "#738298",
+                        "on-secondary-fixed": "#001f26",
+                        "outline-variant": "#45464d",
+                        "on-background": "#dae2fd",
+                        "tertiary-fixed": "#d5e3fd",
+                        "on-tertiary": "#233144",
+                        "on-secondary": "#003640",
+                        "inverse-primary": "#006c49",
+                        "surface-dim": "#0b1326",
+                        "on-primary": "#003824",
+                        "on-error": "#690005",
+                        "error": "#ffb4ab",
+                        "on-surface": "#dae2fd",
+                        "tertiary-fixed-dim": "#b9c7e0",
+                        "surface-container-lowest": "#060e20",
+                        "surface-tint": "#4edea3",
+                        "primary-container": "#001c10",
+                        "primary": "#4edea3",
+                        "inverse-surface": "#dae2fd",
+                        "secondary-fixed-dim": "#4cd7f6",
+                        "on-secondary-fixed-variant": "#004e5c",
+                        "error-container": "#93000a",
+                        "tertiary": "#b9c7e0",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed": "#6ffbbe",
+                        "secondary-fixed": "#acedff",
+                        "on-primary-fixed": "#002113",
+                        "secondary": "#4cd7f6",
+                        "surface-variant": "#2d3449",
+                        "on-surface-variant": "#c6c6cd",
+                        "on-primary-fixed-variant": "#005236",
+                        "background": "#0b1326",
+                        "surface-container-high": "#222a3d",
+                        "on-secondary-container": "#00424e",
+                        "surface-container-low": "#131b2e",
+                        "primary-fixed-dim": "#4edea3",
+                        "on-tertiary-fixed": "#0d1c2f",
+                        "outline": "#909097",
+                        "on-tertiary-fixed-variant": "#3a485c",
+                        "surface-container-highest": "#2d3449",
+                        "surface-bright": "#31394d",
+                        "surface": "#0b1326",
+                        "secondary-container": "#03b5d3",
+                        "inverse-on-surface": "#283044",
+                        "tertiary-container": "#09182a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-panel { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .text-glow { text-shadow: 0 0 20px rgba(78, 222, 163, 0.4); }
+    </style>
+</head>
+<body class="bg-background text-on-background selection:bg-primary selection:text-on-primary">
+<!-- TopNavBar Suppression Logic: Rendered because this is the root landing destination -->
+<nav class="w-full h-16 sticky top-0 z-50 bg-slate-950/50 backdrop-blur-md flex items-center justify-between px-8 md:px-12">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-extrabold tracking-tighter text-primary font-headline">Sportlytics</span>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-primary font-bold transition-colors" href="#">Dashboard</a>
+<a class="text-slate-300 hover:text-primary transition-colors" href="#">Matches</a>
+<a class="text-slate-300 hover:text-primary transition-colors" href="#">Leaderboard</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center bg-surface-container-lowest px-4 py-1.5 rounded-full">
+<span class="material-symbols-outlined text-on-surface-variant text-sm mr-2">search</span>
+<input class="bg-transparent border-none text-sm focus:ring-0 p-0 text-on-surface w-32 md:w-48" placeholder="Search athlete..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-slate-300 hover:text-primary p-2 transition-transform active:scale-90">notifications</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30">
+<img class="w-full h-full object-cover" data-alt="Portrait of a determined amateur athlete looking forward with subtle stadium lighting in the background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOIlGYPAh4hAq0otIGOPzCjh0ZbjMhd5RMaXJqnUVpG_aV5kBulrK-IeYJMl8865oOLF7-mb-1DkYGrASH1Es2y8aCTf2pfAyGliT9KrfNzybRL4n3kNPxnIr2hrfJmQd2eXjsmV2MIMVgveMvch_nbEewEX0f9HNQVzCGyYSI5BJGT-cgdn3xGyCSk-a2kcePoTc07CLqpgXIHp1QkCKGGtljIGNXCLpcjsLOVRQQqlEth0aqWEx_sXfyQG5Q2xzWq3zKikgQfoY"/>
+</div>
+</div>
+</nav>
+<main>
+<!-- Hero Section -->
+<section class="relative min-h-[921px] flex flex-col justify-center items-center px-6 overflow-hidden">
+<!-- Background Image with Tonal Overlay -->
+<div class="absolute inset-0 -z-10">
+<img class="w-full h-full object-cover opacity-40" data-alt="Dynamic shot of an athlete sprinting on a dark track with sharp overhead lighting and misty atmospheric depth" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBr84hsqTrfqTfzsMjktnU8H5QK6TcvQW-AoLcccwetK0UQWhX2JwyZuiVxSN1Vkgp6KHIhcl8rbjZ-9y0NOtyNYvaZ-L8UcYmTr55AXaukOtJ-Yo_wUaz6QQARiW2rZpbR2EGoFgM2G6-Xc602KI8KIGEy8TGosfdar5FnFjggOXphomyQzphy90c_WpldRU4ctjdHuVWa6mos2gPjx-VwVSuC7hLG2BZAY1PP3uqrdK5f0o-_aZM_3HvCHfJLnKkXxKPpTsB_cvI"/>
+<div class="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background"></div>
+</div>
+<div class="max-w-5xl text-center z-10">
+<div class="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-8">
+<span class="text-xs font-bold tracking-widest text-primary uppercase">Elite Amateur Performance</span>
+</div>
+<h1 class="text-6xl md:text-8xl font-headline font-extrabold tracking-tight mb-6 leading-[1.1]">
+                    Track. Analyze. <span class="text-primary text-glow">Rise.</span>
+</h1>
+<p class="text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto mb-10 leading-relaxed">
+                    Bridging the gap between amateur play and professional data. Real-time metrics for athletes who take their game seriously.
+                </p>
+<div class="flex flex-col sm:flex-row gap-4 justify-center">
+<button class="px-8 py-4 bg-gradient-to-br from-primary to-on-primary-container text-on-primary-fixed font-bold rounded-DEFAULT transition-all hover:shadow-[0_0_30px_rgba(78,222,163,0.3)] active:scale-95">
+                        Get Started
+                    </button>
+<button class="px-8 py-4 bg-surface-container-highest border border-secondary/20 text-secondary font-bold rounded-DEFAULT transition-all hover:bg-surface-bright active:scale-95">
+                        View Stats
+                    </button>
+</div>
+</div>
+<!-- Floating Data Glass Card -->
+<div class="absolute -bottom-12 md:bottom-12 right-6 md:right-12 glass-panel bg-surface-container-lowest/70 p-6 rounded-lg shadow-xl border border-white/5 hidden lg:block w-72">
+<div class="flex justify-between items-center mb-4">
+<span class="text-xs font-bold text-on-surface-variant uppercase">Peak Performance</span>
+<span class="material-symbols-outlined text-primary text-sm">trending_up</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-end">
+<span class="text-3xl font-headline font-bold text-primary">94.2</span>
+<span class="text-xs text-on-surface-variant mb-1">Efficiency Score</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[94%]"></div>
+</div>
+<div class="grid grid-cols-2 gap-2 text-[10px] text-on-surface-variant uppercase font-bold">
+<div class="bg-surface-container/50 p-2 rounded-sm">Avg BPM: 162</div>
+<div class="bg-surface-container/50 p-2 rounded-sm">Recovery: 92%</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Bento Grid -->
+<section class="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+<div class="mb-16">
+<h2 class="text-headline font-bold text-4xl mb-4">Master Your Game</h2>
+<div class="w-24 h-1 bg-primary rounded-full"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Analytics Card -->
+<div class="md:col-span-8 bg-surface-container-low rounded-lg p-8 relative overflow-hidden group">
+<div class="relative z-10 h-full flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-primary text-4xl mb-4" data-weight="fill">analytics</span>
+<h3 class="text-3xl font-headline font-bold mb-4">Advanced Analytics</h3>
+<p class="text-on-surface-variant max-w-md">Every move, recorded. Every sprint, measured. Dive deep into the data that defines your performance on the pitch.</p>
+</div>
+<div class="mt-8 flex gap-4">
+<span class="px-4 py-2 bg-background/50 rounded-full text-xs font-bold border border-outline-variant/20">VO2 Max Tracking</span>
+<span class="px-4 py-2 bg-background/50 rounded-full text-xs font-bold border border-outline-variant/20">Heatmap Generation</span>
+</div>
+</div>
+<div class="absolute top-0 right-0 w-1/2 h-full opacity-20 group-hover:opacity-40 transition-opacity">
+<img class="w-full h-full object-cover" data-alt="Abstract visualization of sports data overlays on a green soccer field with cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDsuywIMa4DwZLhSo9-xrHLVMtrRiIrkZHHb04tY54sCYsHstTnrOZoGEcismDBmInQn3ASuX3dw3VjOZfRfwfePsELNd0KrFodluygSP25Haxl89LIH4gSGOJAWfR0bwKxjOExTGgvcNrRt7quHhpdshPAFZvxlSQXDzxPVBgYJAoROZDJQsWpsPP_JaOLXmy02hFQmAir8tk-gSjvLakFicA0alTmpAJUHe9QfTp18WPNNWhGW_ay0UjSGr_ObVTKTPbwyan6lY"/>
+</div>
+</div>
+<!-- Player Profiles Card -->
+<div class="md:col-span-4 bg-surface-container-high rounded-lg p-8 flex flex-col justify-between border border-primary/5 hover:border-primary/20 transition-colors">
+<span class="material-symbols-outlined text-secondary text-4xl mb-4" data-weight="fill">account_circle</span>
+<h3 class="text-2xl font-headline font-bold mb-2">Player Profiles</h3>
+<p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Build your professional-grade athletic CV. Share your stats with scouts, coaches, and clubs.</p>
+<div class="flex -space-x-3 overflow-hidden mb-4">
+<img alt="" class="inline-block h-10 w-10 rounded-full ring-2 ring-surface-container-high" data-alt="Profile of a male athlete" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDW1k5omi59VG-QUp0EyfOOWQxDgUXwTt1X2FRpUN2z_8r52sHkm8M1PH-QE8Fuq-obs-gE8s_9nfhGthwuRkyZGGtZaAMPkv9qm7RcUo-Dwif2SyTBqZYPqLSxytUIkBAeoEhj-mjNQknv4G5-FP5_bSZk1fx0t5ZNJnoTyEXlKUgDVDUh-GdflZhvFKlFRcQ1Xg8yXTo30Lsb3ZoJrGNImFOEqoF-8gNlMA69XtkMUtHh1zvAeY_y3g2HjyfhlCbcjJK_2oxerfw"/>
+<img alt="" class="inline-block h-10 w-10 rounded-full ring-2 ring-surface-container-high" data-alt="Profile of a female athlete" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-d1BCasR08pMZG8Ocxp-ZWyz_Hc1IKTgdBs5sbBfiustdiHWWnmxo-t8uedByZ-arP-RbS5uL5muZDC9qlJdpqYlgquxD1Pej19GJ46iN8gAeuirUJhjIG-36nvG44JUoazuTc_hF0Pts-fE0ZfwoyiiRtjMdh0ttQf9JvpVTaKh7Qk_zJcOCLiW6gh50cTmZBYin286NQc-EpYcsF2Qg8z6yNRuf74NN8sQMek3kitTssln3243TzGhpd4e_VwX-y-ZBkWopip0"/>
+<img alt="" class="inline-block h-10 w-10 rounded-full ring-2 ring-surface-container-high" data-alt="Profile of a young athlete" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdA8kaqrJA8T1_aEnj8PBU44FegjUbKlwv-Le5LM2vhAPQ5CSsB177JEXyb9R8vug5U9zLF-8a972ThwQvl6KQTlvxz6HTfCUg3VNeOPDkMe2bGcvb0kTXlvIUAm8DEA9QspADwoafO-_3BFLLdnbDFrYSZgFDFpARoH4PEseNOF1CKmIev33F-tarXv7n6OoLKHfMGVeM0L4Qa3XMLcvQmn6dpK5kjX2RMu5f6tOjb8OwH4iFcLxXZIMR1HI9bAJZ93qTfJYnJrc"/>
+<div class="flex items-center justify-center h-10 w-10 rounded-full ring-2 ring-surface-container-high bg-primary/20 text-primary text-xs font-bold">+12k</div>
+</div>
+<a class="text-primary text-sm font-bold flex items-center hover:underline" href="#">Customize Profile <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span></a>
+</div>
+<!-- Leaderboards Card -->
+<div class="md:col-span-4 bg-surface-container-lowest rounded-lg p-8 border border-white/5 relative group cursor-default overflow-hidden">
+<div class="relative z-10">
+<span class="material-symbols-outlined text-on-tertiary-container text-4xl mb-4" data-weight="fill">leaderboard</span>
+<h3 class="text-2xl font-headline font-bold mb-2">Local Leaderboards</h3>
+<p class="text-sm text-on-surface-variant mb-6">See where you stand against the best in your city. Climb the ranks in various athletic disciplines.</p>
+<ul class="space-y-3">
+<li class="flex items-center justify-between text-xs py-2 border-b border-outline-variant/10">
+<span class="text-on-surface">1. Alex Rivera</span>
+<span class="text-primary font-bold">1,240 pts</span>
+</li>
+<li class="flex items-center justify-between text-xs py-2 border-b border-outline-variant/10">
+<span class="text-on-surface">2. Jamie Chen</span>
+<span class="text-primary font-bold">1,195 pts</span>
+</li>
+<li class="flex items-center justify-between text-xs py-2 opacity-50">
+<span class="text-on-surface">3. Sarah Moss</span>
+<span class="text-primary font-bold">1,150 pts</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Community Card -->
+<div class="md:col-span-8 bg-surface-container-low rounded-lg p-8 flex flex-col md:flex-row gap-8 items-center">
+<div class="flex-1">
+<h3 class="text-2xl font-headline font-bold mb-4">Amateur Pro Community</h3>
+<p class="text-on-surface-variant mb-6 italic">"Sportlytics changed how our local Sunday league operates. The data doesn't lie, and the competition has never been more intense."</p>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-slate-800"></div>
+<div>
+<p class="text-sm font-bold text-on-surface">Marcus Thorne</p>
+<p class="text-xs text-on-surface-variant uppercase">Team Captain, City FC</p>
+</div>
+</div>
+</div>
+<div class="flex-1 w-full h-48 md:h-full min-h-[200px] rounded-lg overflow-hidden">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="A group of diverse amateur athletes high-fiving on a floodlit field at dusk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYeRpYFiI5nNhgjVZ9k2remZ73eUdOIwC1ul49h2Lkfc-z5EIMevaL24IDF74bkQDJideiFq0zDzYqZFKsDcSVMgyYQfrBwadaeI4w1bC5x5SWlAZvFzBQ5izwyJhQizUUM2bbnrhzrRgoCPEUoLb62B9XhQoZr1pkPFTAGjY6u6CjWEu-ld7GteelG-XTIxOiJHKayANrB21Spo8zSclHyIiKUQcVC1tXhcEGyC2gxreVILQBgO0pxzyB2B0K8HL7fvKLwNa0b5I"/>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-24 bg-surface-container-lowest">
+<div class="max-w-4xl mx-auto px-6 text-center">
+<h2 class="text-4xl md:text-5xl font-headline font-extrabold mb-6">Ready to dominate the leaderboard?</h2>
+<p class="text-on-surface-variant mb-10 text-lg">Join 50,000+ athletes already rising to the top with elite analytics.</p>
+<div class="flex flex-wrap justify-center gap-6">
+<div class="flex items-center gap-2 px-6 py-4 bg-surface-container rounded-lg">
+<span class="material-symbols-outlined text-primary">verified</span>
+<span class="font-bold text-sm">Verified Stats</span>
+</div>
+<div class="flex items-center gap-2 px-6 py-4 bg-surface-container rounded-lg">
+<span class="material-symbols-outlined text-secondary">share</span>
+<span class="font-bold text-sm">Social Integrations</span>
+</div>
+<div class="flex items-center gap-2 px-6 py-4 bg-surface-container rounded-lg">
+<span class="material-symbols-outlined text-on-tertiary-container">history</span>
+<span class="font-bold text-sm">Progression Archiving</span>
+</div>
+</div>
+<button class="mt-12 px-10 py-5 bg-primary text-on-primary-fixed text-lg font-extrabold rounded-full hover:scale-105 transition-transform">
+                    Claim Your Profile Now
+                </button>
+</div>
+</section>
+</main>
+<footer class="bg-background py-12 px-8 border-t border-outline-variant/10">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col items-center md:items-start">
+<span class="text-2xl font-extrabold tracking-tighter text-primary font-headline mb-2">Sportlytics</span>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest font-bold">Kinetic Precision © 2024</p>
+</div>
+<div class="flex gap-8 text-sm font-medium text-on-surface-variant">
+<a class="hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms</a>
+<a class="hover:text-primary transition-colors" href="#">Contact</a>
+<a class="hover:text-primary transition-colors" href="#">API</a>
+</div>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-bright transition-colors" href="#">
+<span class="material-symbols-outlined text-on-surface text-xl">language</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-bright transition-colors" href="#">
+<span class="material-symbols-outlined text-on-surface text-xl">alternate_email</span>
+</a>
+</div>
+</div>
+</footer>
+<!-- FAB Suppression: Suppressed for landing page focused on browsing/reading -->
+</body></html>
