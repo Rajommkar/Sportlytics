@@ -90,19 +90,31 @@
 <div class="flex items-center gap-8">
 <span class="text-2xl font-extrabold tracking-tighter text-primary font-headline">Sportlytics</span>
 <div class="hidden md:flex gap-6 items-center">
-<a class="text-primary font-bold transition-colors" href="#">Dashboard</a>
-<a class="text-slate-300 hover:text-primary transition-colors" href="#">Matches</a>
-<a class="text-slate-300 hover:text-primary transition-colors" href="#">Leaderboard</a>
+<a class="text-primary font-bold transition-colors" href="dashboard.html">Dashboard</a>
+<a class="text-slate-300 hover:text-primary transition-colors cursor-pointer" onclick="handleProtectedRoute('login')">Matches</a>
+<a class="text-slate-300 hover:text-primary transition-colors" href="leaderboard.html">Leaderboard</a>
 </div>
 </div>
 <div class="flex items-center gap-4">
-<div class="hidden sm:flex items-center bg-surface-container-lowest px-4 py-1.5 rounded-full">
+<form onsubmit="event.preventDefault(); handleProtectedRoute('login');" class="hidden sm:flex items-center bg-surface-container-lowest px-4 py-1.5 rounded-full cursor-pointer hover:bg-surface-container-high transition-colors">
 <span class="material-symbols-outlined text-on-surface-variant text-sm mr-2">search</span>
-<input class="bg-transparent border-none text-sm focus:ring-0 p-0 text-on-surface w-32 md:w-48" placeholder="Search athlete..." type="text"/>
-</div>
+<input readonly onclick="handleProtectedRoute('login')" class="bg-transparent border-none text-sm focus:ring-0 p-0 text-on-surface w-32 md:w-48 cursor-pointer" placeholder="Search athlete (Go to Dashboard)" type="text"/>
+</form>
 <button class="material-symbols-outlined text-slate-300 hover:text-primary p-2 transition-transform active:scale-90">notifications</button>
-<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30">
-<img class="w-full h-full object-cover" data-alt="Portrait of a determined amateur athlete looking forward with subtle stadium lighting in the background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOIlGYPAh4hAq0otIGOPzCjh0ZbjMhd5RMaXJqnUVpG_aV5kBulrK-IeYJMl8865oOLF7-mb-1DkYGrASH1Es2y8aCTf2pfAyGliT9KrfNzybRL4n3kNPxnIr2hrfJmQd2eXjsmV2MIMVgveMvch_nbEewEX0f9HNQVzCGyYSI5BJGT-cgdn3xGyCSk-a2kcePoTc07CLqpgXIHp1QkCKGGtljIGNXCLpcjsLOVRQQqlEth0aqWEx_sXfyQG5Q2xzWq3zKikgQfoY"/>
+<!-- Auth Controls -->
+<div id="auth-unauthenticated" class="flex gap-2 items-center">
+    <button onclick="openAuthModal('login')" class="px-4 py-1.5 text-sm font-bold text-on-surface hover:text-primary transition-colors">Sign In</button>
+    <button onclick="openAuthModal('register')" class="px-4 py-1.5 text-sm font-bold bg-primary text-on-primary-fixed rounded-full hover:scale-105 transition-transform shadow-[0_0_15px_rgba(78,222,163,0.3)]">Sign Up</button>
+</div>
+<div id="auth-authenticated" class="hidden items-center gap-3">
+    <div class="hidden md:block flex-col text-right">
+        <span id="user-display-name" class="text-xs font-bold text-on-surface block leading-tight">Athlete</span>
+        <span onclick="logout()" class="text-[10px] text-error cursor-pointer hover:underline">Sign Out</span>
+    </div>
+    <div class="w-8 h-8 rounded-full overflow-hidden border border-primary relative">
+        <img class="w-full h-full object-cover" data-alt="Portrait of a determined amateur athlete" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOIlGYPAh4hAq0otIGOPzCjh0ZbjMhd5RMaXJqnUVpG_aV5kBulrK-IeYJMl8865oOLF7-mb-1DkYGrASH1Es2y8aCTf2pfAyGliT9KrfNzybRL4n3kNPxnIr2hrfJmQd2eXjsmV2MIMVgveMvch_nbEewEX0f9HNQVzCGyYSI5BJGT-cgdn3xGyCSk-a2kcePoTc07CLqpgXIHp1QkCKGGtljIGNXCLpcjsLOVRQQqlEth0aqWEx_sXfyQG5Q2xzWq3zKikgQfoY"/>
+        <div class="absolute bottom-0 right-0 w-2 h-2 bg-primary rounded-full border border-surface-container"></div>
+    </div>
 </div>
 </div>
 </nav>
@@ -125,10 +137,10 @@
                     Bridging the gap between amateur play and professional data. Real-time metrics for athletes who take their game seriously.
                 </p>
 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-<button class="px-8 py-4 bg-gradient-to-br from-primary to-on-primary-container text-on-primary-fixed font-bold rounded-DEFAULT transition-all hover:shadow-[0_0_30px_rgba(78,222,163,0.3)] active:scale-95">
+<button onclick="handleProtectedRoute('register')" class="px-8 py-4 bg-gradient-to-br from-primary to-on-primary-container text-on-primary-fixed font-bold rounded-DEFAULT transition-all hover:shadow-[0_0_30px_rgba(78,222,163,0.3)] active:scale-95">
                         Get Started
                     </button>
-<button class="px-8 py-4 bg-surface-container-highest border border-secondary/20 text-secondary font-bold rounded-DEFAULT transition-all hover:bg-surface-bright active:scale-95">
+<button onclick="handleProtectedRoute('login')" class="px-8 py-4 bg-surface-container-highest border border-secondary/20 text-secondary font-bold rounded-DEFAULT transition-all hover:bg-surface-bright active:scale-95">
                         View Stats
                     </button>
 </div>
@@ -197,19 +209,8 @@
 <span class="material-symbols-outlined text-on-tertiary-container text-4xl mb-4" data-weight="fill">leaderboard</span>
 <h3 class="text-2xl font-headline font-bold mb-2">Local Leaderboards</h3>
 <p class="text-sm text-on-surface-variant mb-6">See where you stand against the best in your city. Climb the ranks in various athletic disciplines.</p>
-<ul class="space-y-3">
-<li class="flex items-center justify-between text-xs py-2 border-b border-outline-variant/10">
-<span class="text-on-surface">1. Alex Rivera</span>
-<span class="text-primary font-bold">1,240 pts</span>
-</li>
-<li class="flex items-center justify-between text-xs py-2 border-b border-outline-variant/10">
-<span class="text-on-surface">2. Jamie Chen</span>
-<span class="text-primary font-bold">1,195 pts</span>
-</li>
-<li class="flex items-center justify-between text-xs py-2 opacity-50">
-<span class="text-on-surface">3. Sarah Moss</span>
-<span class="text-primary font-bold">1,150 pts</span>
-</li>
+<ul class="space-y-3" id="dynamic-leaderboard">
+<li class="flex items-center justify-center text-xs py-2 opacity-50"><span class="material-symbols-outlined animate-spin mr-2 scale-75">refresh</span> Fetching Live Data...</li>
 </ul>
 </div>
 </div>
@@ -251,7 +252,7 @@
 <span class="font-bold text-sm">Progression Archiving</span>
 </div>
 </div>
-<button class="mt-12 px-10 py-5 bg-primary text-on-primary-fixed text-lg font-extrabold rounded-full hover:scale-105 transition-transform">
+<button onclick="handleProtectedRoute('register')" class="mt-12 px-10 py-5 bg-primary text-on-primary-fixed text-lg font-extrabold rounded-full hover:scale-105 transition-transform">
                     Claim Your Profile Now
                 </button>
 </div>
@@ -279,5 +280,249 @@
 </div>
 </div>
 </footer>
+
+<!-- Auth Modal -->
+<div id="auth-modal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" onclick="closeAuthModal()"></div>
+    
+    <!-- Modal Card -->
+    <div class="relative w-full max-w-md bg-surface-container-high border border-outline-variant/30 rounded-xl p-8 shadow-2xl overflow-hidden glass-panel scale-95 opacity-0 transition-all duration-300 transform" id="auth-modal-card">
+        <!-- Close Button -->
+        <button onclick="closeAuthModal()" class="absolute top-4 right-4 material-symbols-outlined text-on-surface-variant hover:text-on-surface">close</button>
+        
+        <!-- Toggle Tabs -->
+        <div class="flex gap-4 mb-8 border-b border-outline-variant/20 pb-2">
+            <button onclick="switchTab('login')" id="tab-login" class="text-lg font-headline font-bold text-primary border-b-2 border-primary px-2 pb-1">Log In</button>
+            <button onclick="switchTab('register')" id="tab-register" class="text-lg font-headline font-bold text-on-surface-variant hover:text-on-surface px-2 pb-1 transition-colors">Sign Up</button>
+        </div>
+
+        <!-- Feedback UI -->
+        <div id="auth-error" class="hidden mb-4 p-3 rounded bg-error-container text-on-error-container text-xs font-bold text-center"></div>
+        <div id="auth-success" class="hidden mb-4 p-3 rounded bg-primary/20 text-primary text-xs font-bold text-center border border-primary/20"></div>
+
+        <!-- Login Form -->
+        <form id="form-login" class="space-y-4" onsubmit="handleLogin(event)">
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1 uppercase tracking-wider">Email</label>
+                <input type="email" id="login-email" required class="w-full bg-surface border border-outline-variant/50 rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" placeholder="player@club.com">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1 uppercase tracking-wider">Password</label>
+                <input type="password" id="login-password" required class="w-full bg-surface border border-outline-variant/50 rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" placeholder="••••••••">
+            </div>
+            <button type="submit" class="w-full py-3 mt-4 bg-primary text-on-primary-fixed font-bold rounded-lg hover:bg-primary-fixed transition-colors shadow-[0_0_20px_rgba(78,222,163,0.2)]">Sign In</button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="form-register" class="space-y-4 hidden" onsubmit="handleRegister(event)">
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1 uppercase tracking-wider">Full Name</label>
+                <input type="text" id="register-name" required class="w-full bg-surface border border-outline-variant/50 rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" placeholder="Alex Rivera">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1 uppercase tracking-wider">Email</label>
+                <input type="email" id="register-email" required class="w-full bg-surface border border-outline-variant/50 rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" placeholder="player@club.com">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1 uppercase tracking-wider">Password</label>
+                <input type="password" id="register-password" required class="w-full bg-surface border border-outline-variant/50 rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" placeholder="Create a strong password">
+            </div>
+            <button type="submit" class="w-full py-3 mt-4 bg-primary text-on-primary-fixed font-bold rounded-lg hover:bg-primary-fixed transition-colors shadow-[0_0_20px_rgba(78,222,163,0.2)]">Create Account</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // --- Authentication UI Logic ---
+    const modal = document.getElementById('auth-modal');
+    const modalCard = document.getElementById('auth-modal-card');
+    const formLogin = document.getElementById('form-login');
+    const formRegister = document.getElementById('form-register');
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    const authError = document.getElementById('auth-error');
+    const authSuccess = document.getElementById('auth-success');
+
+    function openAuthModal(view = 'login') {
+        modal.classList.remove('hidden');
+        // trigger animation
+        setTimeout(() => {
+            modalCard.classList.remove('scale-95', 'opacity-0');
+        }, 10);
+        switchTab(view);
+    }
+
+    function closeAuthModal() {
+        modalCard.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            authError.classList.add('hidden');
+            authSuccess.classList.add('hidden');
+        }, 300);
+    }
+
+    function switchTab(tab) {
+        authError.classList.add('hidden');
+        authSuccess.classList.add('hidden');
+        if (tab === 'login') {
+            formLogin.classList.remove('hidden');
+            formRegister.classList.add('hidden');
+            tabLogin.className = "text-lg font-headline font-bold text-primary border-b-2 border-primary px-2 pb-1";
+            tabRegister.className = "text-lg font-headline font-bold text-on-surface-variant hover:text-on-surface px-2 pb-1 transition-colors";
+        } else {
+            formRegister.classList.remove('hidden');
+            formLogin.classList.add('hidden');
+            tabRegister.className = "text-lg font-headline font-bold text-primary border-b-2 border-primary px-2 pb-1";
+            tabLogin.className = "text-lg font-headline font-bold text-on-surface-variant hover:text-on-surface px-2 pb-1 transition-colors";
+        }
+    }
+
+    // --- Authentication API Logic ---
+    const API_URL = 'http://127.0.0.1:5000/api/auth';
+
+    async function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        
+        try {
+            const res = await fetch(`${API_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            
+            if (res.ok) {
+                localStorage.setItem('sportlytics_token', data.token);
+                localStorage.setItem('sportlytics_user', JSON.stringify(data.user));
+                showSuccess('Welcome back!');
+                setTimeout(() => { 
+                    closeAuthModal(); 
+                    checkAuthState(); 
+                    document.getElementById('login-password').value = '';
+                }, 1500);
+            } else {
+                showError(data.message || 'Login failed');
+            }
+        } catch (err) {
+            showError('Network error connecting to backend.');
+        }
+    }
+
+    async function handleRegister(e) {
+        e.preventDefault();
+        const name = document.getElementById('register-name').value;
+        const email = document.getElementById('register-email').value;
+        const password = document.getElementById('register-password').value;
+        
+        try {
+            const res = await fetch(`${API_URL}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
+            });
+            const data = await res.json();
+            
+            if (res.ok) {
+                localStorage.setItem('sportlytics_token', data.token);
+                localStorage.setItem('sportlytics_user', JSON.stringify(data.user));
+                showSuccess('Account created successfully!');
+                setTimeout(() => { 
+                    closeAuthModal(); 
+                    checkAuthState();
+                    document.getElementById('register-password').value = '';
+                }, 1500);
+            } else {
+                showError(data.message || 'Registration failed');
+            }
+        } catch (err) {
+            showError('Network error connecting to backend.');
+        }
+    }
+
+    function showError(msg) {
+        authError.innerText = msg;
+        authError.classList.remove('hidden');
+        authSuccess.classList.add('hidden');
+    }
+
+    function showSuccess(msg) {
+        authSuccess.innerText = msg;
+        authSuccess.classList.remove('hidden');
+        authError.classList.add('hidden');
+    }
+
+    // --- Core Auth State Management ---
+    function handleProtectedRoute(fallbackView) {
+        const token = localStorage.getItem('sportlytics_token');
+        if (token) {
+            window.location.href = 'dashboard.html';
+        } else {
+            openAuthModal(fallbackView);
+        }
+    }
+
+    function checkAuthState() {
+        const token = localStorage.getItem('sportlytics_token');
+        const userStr = localStorage.getItem('sportlytics_user');
+        
+        const unauthUI = document.getElementById('auth-unauthenticated');
+        const authUI = document.getElementById('auth-authenticated');
+        const nameDisplay = document.getElementById('user-display-name');
+
+        if (token && userStr) {
+            const user = JSON.parse(userStr);
+            unauthUI.classList.add('hidden');
+            authUI.classList.remove('hidden');
+            authUI.classList.add('flex');
+            nameDisplay.innerText = user.name;
+        } else {
+            unauthUI.classList.remove('hidden');
+            authUI.classList.add('hidden');
+            authUI.classList.remove('flex');
+        }
+    }
+    
+    function logout() {
+        localStorage.removeItem('sportlytics_token');
+        localStorage.removeItem('sportlytics_user');
+        checkAuthState();
+    }
+
+    // --- Public API Logic ---
+    async function fetchLeaderboard() {
+        try {
+            const res = await fetch('http://127.0.0.1:5000/api/public/leaderboard');
+            const users = await res.json();
+            const list = document.getElementById('dynamic-leaderboard');
+            list.innerHTML = '';
+            
+            if (users.length === 0) {
+                list.innerHTML = '<li class="text-xs text-on-surface-variant text-center py-2">No athletes ranked yet.</li>';
+                return;
+            }
+
+            users.forEach((u, i) => {
+                const opacity = i > 1 ? 'opacity-50' : '';
+                list.innerHTML += `
+                <li class="flex items-center justify-between text-xs py-2 border-b border-outline-variant/10 ${opacity}">
+                    <span class="text-on-surface">${i + 1}. ${u.name}</span>
+                    <span class="text-primary font-bold">${u.efficiencyScore ? u.efficiencyScore.toFixed(1) : '0.0'} pts</span>
+                </li>`;
+            });
+        } catch (err) {
+            console.error('Failed to fetch leaderboard');
+        }
+    }
+
+    // Run when the page first loads
+    document.addEventListener('DOMContentLoaded', () => {
+        checkAuthState();
+        fetchLeaderboard();
+    });
+</script>
+
 <!-- FAB Suppression: Suppressed for landing page focused on browsing/reading -->
 </body></html>

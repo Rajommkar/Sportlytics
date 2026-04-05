@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Sportlytics | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script id="tailwind-config">
+        // Mirroring index.html theme
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#171f33",
+                        "on-background": "#dae2fd",
+                        "primary": "#4edea3",
+                        "on-primary-fixed": "#002113",
+                        "surface-variant": "#2d3449",
+                        "background": "#0b1326",
+                        "surface-container-high": "#222a3d",
+                        "surface-container-lowest": "#060e20",
+                        "error": "#ffb4ab",
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-panel { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    </style>
+</head>
+<body class="bg-background text-on-background selection:bg-primary selection:text-surface-container">
+
+<nav class="w-full h-16 sticky top-0 z-50 bg-slate-950/50 backdrop-blur-md flex items-center justify-between px-8 md:px-12 border-b border-surface-variant/50">
+    <div class="flex items-center gap-8">
+        <a href="index.html" class="text-2xl font-extrabold tracking-tighter text-primary font-headline">Sportlytics</a>
+        <div class="hidden md:flex gap-6 items-center">
+            <span class="text-sm font-bold bg-surface-container-high px-3 py-1 rounded text-primary border border-primary/20">PRO_DASHBOARD</span>
+            <a class="text-slate-300 hover:text-primary transition-colors font-bold text-sm" href="leaderboard.html">Leaderboard</a>
+        </div>
+    </div>
+    <div class="flex items-center gap-4">
+        <div class="flex flex-col text-right">
+            <span id="user-display-name" class="text-xs font-bold text-on-surface block leading-tight">...</span>
+            <div class="flex items-center justify-end gap-2 mt-1">
+                <span onclick="openSettingsModal()" class="text-[10px] text-on-surface/60 cursor-pointer hover:text-primary">Settings</span>
+                <span onclick="logout()" class="text-[10px] text-error cursor-pointer hover:underline">Sign Out</span>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-12 gap-8">
+    
+    <!-- Column 1: Personal Stats & Logging -->
+    <div class="md:col-span-4 space-y-8">
+        <!-- Profile Card -->
+        <div class="bg-surface-container-lowest rounded-xl p-6 border border-primary/10 shadow-[0_0_30px_rgba(78,222,163,0.05)]">
+            <h2 class="text-xl font-headline font-bold mb-4">My Performance</h2>
+            <div class="text-5xl font-headline font-extrabold text-primary mb-1" id="dash-score">0.0</div>
+            <div class="text-xs text-on-surface/60 uppercase tracking-widest font-bold mb-6">Efficiency Score</div>
+            
+            <div class="bg-surface-container py-3 px-4 rounded-lg flex justify-between items-center">
+                <span class="text-sm font-bold text-on-surface">Matches Logged</span>
+                <span class="text-lg font-bold text-primary" id="dash-matches">0</span>
+            </div>
+        </div>
+
+        <!-- Log Activity Form -->
+        <div class="bg-surface-container rounded-xl p-6 border border-surface-variant">
+            <h3 class="text-lg font-headline font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">add_circle</span> Log Activity</h3>
+            <form id="form-log" onsubmit="handleLogMatch(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-on-surface/80 mb-1">DURATION (MINUTES)</label>
+                    <input type="number" id="log-duration" required min="1" class="w-full bg-background border border-surface-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors" placeholder="e.g., 90">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-on-surface/80 mb-1">PERCEIVED EFFORT (1-10)</label>
+                    <input type="number" id="log-effort" required min="1" max="10" class="w-full bg-background border border-surface-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors" placeholder="e.g., 8">
+                </div>
+                <button type="submit" class="w-full py-3 bg-primary text-on-primary-fixed font-bold rounded-lg hover:scale-[1.02] transition-transform">Submit Stats</button>
+                <div id="log-feedback" class="text-xs text-center font-bold hidden p-2 rounded"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Column 2 & 3: Interactivity & Pro Benchmark -->
+    <div class="md:col-span-8 space-y-8">
+        
+        <!-- Match History Chart -->
+        <div class="bg-surface-container-high rounded-xl p-8 border border-white/5">
+            <h2 class="text-xl font-headline font-bold mb-4">Performance Trends</h2>
+            <div class="w-full h-48 md:h-64 relative">
+                <canvas id="matchChart"></canvas>
+            </div>
+            <div id="no-matches-msg" class="hidden text-center text-sm text-on-surface/50 mt-4">Log a match to see your history!</div>
+        </div>
+
+        <!-- International Pro Benchmark -->
+        <div class="bg-surface-container-high rounded-xl p-8 border border-white/5 relative overflow-hidden">
+        <div class="relative z-10">
+            <div class="mb-8">
+                <h2 class="text-3xl font-headline font-bold mb-2">Pro Benchmark Gateway</h2>
+                <p class="text-sm text-on-surface/60">Tap into TheSportsDB global network to fetch real-time intelligence on world-class athletes. Compare their stats to your own.</p>
+            </div>
+            
+            <!-- Search Bar -->
+            <form id="form-pro-search" onsubmit="handleProSearch(event)" class="flex gap-4 mb-8">
+                <div class="flex-1 bg-surface-container-lowest rounded-full flex items-center px-4 border border-surface-variant focus-within:border-primary transition-colors relative">
+                    <span class="material-symbols-outlined text-primary">person_search</span>
+                    <input type="text" id="search-query" required autocomplete="off" class="flex-1 bg-transparent border-none text-on-surface px-4 py-3 focus:ring-0 outline-none" placeholder="Search any pro athlete (e.g., Lionel Messi)...">
+                    <ul id="search-dropdown" class="absolute top-full left-0 w-full mt-2 bg-surface-container-high border border-surface-variant rounded-xl shadow-2xl overflow-hidden z-50 hidden max-h-60 overflow-y-auto custom-scrollbar"></ul>
+                </div>
+                <button type="submit" id="btn-pro-search" class="px-8 py-3 bg-primary text-on-primary-fixed font-bold rounded-full hover:scale-105 transition-transform">Fetch Data</button>
+            </form>
+
+            <!-- Results Container -->
+            <div id="pro-results" class="hidden">
+                <div class="bg-surface-container rounded-xl p-8 flex flex-col md:flex-row gap-8 border border-primary/20">
+                    <div class="w-48 h-48 md:w-64 md:h-64 rounded-xl overflow-hidden shrink-0 border-2 border-primary shadow-[0_0_20px_rgba(78,222,163,0.3)] bg-background flex items-center justify-center">
+                        <img id="pro-img" src="" class="w-full h-full object-cover hidden">
+                        <span id="pro-img-placeholder" class="material-symbols-outlined text-6xl text-surface-variant">person</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
+                            <span id="pro-sport" class="text-xs font-bold tracking-widest text-primary uppercase">SPORT</span>
+                        </div>
+                        <h3 id="pro-name" class="text-4xl font-headline font-extrabold mb-2">Athlete Name</h3>
+                        <div class="text-xl text-on-surface/80 font-bold mb-4 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">sports_club</span> 
+                            <span id="pro-team">Club Name</span>
+                        </div>
+                        <div id="pro-stats-grid" class="flex flex-wrap gap-3 mt-4">
+                            <!-- Metdata Badges Inject Here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading / Empty State -->
+            <div id="pro-loading" class="hidden text-center py-20">
+                <span class="material-symbols-outlined text-6xl text-primary animate-spin">refresh</span>
+                <p class="mt-4 text-primary font-bold">Accessing Global DB...</p>
+            </div>
+            <div id="pro-empty" class="text-center py-20 border-2 border-dashed border-surface-variant rounded-xl">
+                <span class="material-symbols-outlined text-4xl text-surface-variant mb-2">database</span>
+                <p class="text-surface-variant font-bold">Awaiting Input</p>
+            </div>
+        </div>
+        </div>
+    </div>
+</main>
+
+<!-- Settings Modal -->
+<div id="settings-modal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
+    <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" onclick="closeSettingsModal()"></div>
+    <div class="relative w-full max-w-sm bg-surface-container-high border border-outline-variant/30 rounded-xl p-8 shadow-2xl glass-panel">
+        <button onclick="closeSettingsModal()" class="absolute top-4 right-4 material-symbols-outlined text-surface-variant hover:text-on-surface">close</button>
+        <h3 class="text-xl font-headline font-bold mb-4">Edit Profile</h3>
+        <form id="form-settings" onsubmit="handleUpdateProfile(event)" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-on-surface/80 mb-1">DISPLAY NAME</label>
+                <input type="text" id="settings-name" required class="w-full bg-background border border-surface-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary">
+            </div>
+            <button type="submit" class="w-full py-3 bg-primary text-on-primary-fixed font-bold rounded-lg hover:bg-primary/90">Save Changes</button>
+            <div id="settings-feedback" class="text-xs text-center font-bold hidden p-2 rounded"></div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://127.0.0.1:5000/api';
+    let matchChartInstance = null;
+
+    // 1. --- Route Protection & Initialization ---
+    async function initDashboard() {
+        const token = localStorage.getItem('sportlytics_token');
+        if (!token) {
+            // Kick out unauthenticated users
+            window.location.href = 'index.html';
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_URL}/user/profile`, {
+                headers: { 'x-auth-token': token }
+            });
+            if (!res.ok) throw new Error('Auth failed');
+            
+            const user = await res.json();
+            
+            // Populate UI
+            document.getElementById('user-display-name').innerText = user.name;
+            document.getElementById('dash-score').innerText = user.efficiencyScore.toFixed(1);
+            document.getElementById('dash-matches').innerText = user.totalMatchesLogged || 0;
+            
+            // Initialization actions
+            fetchMatches();
+        } catch (err) {
+            console.error(err);
+            logout();
+        }
+    }
+
+    // 2. --- Logging an Activity ---
+    async function handleLogMatch(e) {
+        e.preventDefault();
+        const duration = document.getElementById('log-duration').value;
+        const effort = document.getElementById('log-effort').value;
+        const token = localStorage.getItem('sportlytics_token');
+        const feedback = document.getElementById('log-feedback');
+
+        try {
+            const res = await fetch(`${API_URL}/user/log`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'x-auth-token': token
+                },
+                body: JSON.stringify({ duration, effort })
+            });
+            const data = await res.json();
+            
+            if (res.ok) {
+                // Flash success
+                feedback.innerText = `Awesome! +${data.pointsEarned} Points Added!`;
+                feedback.className = "text-xs text-center font-bold p-2 mb-4 rounded bg-primary/20 text-primary border border-primary/30 block";
+                
+                // Update UI numbers
+                document.getElementById('dash-score').innerText = data.efficiencyScore.toFixed(1);
+                if (data.totalMatchesLogged) document.getElementById('dash-matches').innerText = data.totalMatchesLogged;
+                
+                // Refresh chart
+                fetchMatches();
+
+                // Reset form
+                e.target.reset();
+                setTimeout(() => feedback.classList.add('hidden'), 4000);
+            } else {
+                feedback.innerText = "Failed to log stat";
+                feedback.className = "text-xs text-center font-bold p-2 rounded bg-error/20 text-error block";
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    // 3. --- International Pro API Fetch ---
+    async function handleProSearch(e) {
+        e.preventDefault();
+        const query = document.getElementById('search-query').value;
+        const btn = document.getElementById('btn-pro-search');
+        
+        // UI states
+        document.getElementById('pro-empty').classList.add('hidden');
+        document.getElementById('pro-results').classList.add('hidden');
+        document.getElementById('pro-loading').classList.remove('hidden');
+        btn.disabled = true;
+        btn.classList.add('opacity-50');
+
+        try {
+            // Open Source Sports API (TheSportsDB)
+            const res = await fetch(`https://www.thesportsdb.com/api/v1/json/3/searchplayers.php?p=${encodeURIComponent(query)}`);
+            const data = await res.json();
+
+            document.getElementById('pro-loading').classList.add('hidden');
+
+            if (data.player && data.player.length > 0) {
+                const p = data.player[0]; // grab the most relevant result
+                
+                // Populate Profile
+                document.getElementById('pro-name').innerText = p.strPlayer || "Unknown Athlete";
+                document.getElementById('pro-team').innerText = p.strTeam || 'Independent/National';
+                
+                // Metadata Badges
+                const grid = document.getElementById('pro-stats-grid');
+                grid.innerHTML = '';
+                
+                const stats = [
+                    { icon: 'flag', label: 'Nationality', value: p.strNationality },
+                    { icon: 'calendar_month', label: 'Born', value: p.dateBorn },
+                    { icon: 'sports_gymnastics', label: 'Position', value: p.strPosition },
+                    { icon: 'vital_signs', label: 'Status', value: p.strStatus }
+                ];
+                
+                stats.forEach(stat => {
+                    if (stat.value) {
+                        grid.innerHTML += `
+                            <div class="flex items-center gap-2 bg-surface-container-highest px-3 py-2 rounded-lg border border-surface-variant">
+                                <span class="material-symbols-outlined text-primary text-sm">${stat.icon}</span>
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] text-on-surface/50 font-bold uppercase tracking-widest">${stat.label}</span>
+                                    <span class="text-sm text-on-surface font-bold">${stat.value}</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                const imgEl = document.getElementById('pro-img');
+                const placeholder = document.getElementById('pro-img-placeholder');
+                
+                if (p.strThumb || p.strRender) {
+                    imgEl.src = p.strRender || p.strThumb; // render is usually transparent cutout
+                    imgEl.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                } else {
+                    imgEl.classList.add('hidden');
+                    placeholder.classList.remove('hidden');
+                }
+
+                document.getElementById('pro-results').classList.remove('hidden');
+            } else {
+                document.getElementById('pro-empty').innerHTML = `<span class="material-symbols-outlined text-4xl text-error mb-2">person_off</span><p class="text-error font-bold">Athlete "${query}" not found in Global DB.</p>`;
+                document.getElementById('pro-empty').classList.remove('hidden');
+                document.getElementById('pro-empty').classList.add('border-error/30');
+            }
+        } catch (err) {
+            console.error(err);
+            document.getElementById('pro-loading').classList.add('hidden');
+            document.getElementById('pro-empty').innerHTML = `<span class="material-symbols-outlined text-4xl text-error mb-2">error</span><p class="text-error font-bold">Network error reaching DB.</p>`;
+            document.getElementById('pro-empty').classList.remove('hidden');
+        } finally {
+            btn.disabled = false;
+            btn.classList.remove('opacity-50');
+        }
+    }
+
+    // 4. --- Match History & Chart.js ---
+    async function fetchMatches() {
+        const token = localStorage.getItem('sportlytics_token');
+        try {
+            const res = await fetch(`${API_URL}/user/matches`, {
+                headers: { 'x-auth-token': token }
+            });
+            if (res.ok) {
+                const matches = await res.json();
+                renderChart(matches);
+            }
+        } catch (err) {
+            console.error('Failed to fetch matches', err);
+        }
+    }
+
+    function renderChart(matches) {
+        const ctx = document.getElementById('matchChart');
+        const msg = document.getElementById('no-matches-msg');
+        
+        if (!matches || matches.length === 0) {
+            msg.classList.remove('hidden');
+            ctx.classList.add('hidden');
+            return;
+        }
+
+        msg.classList.add('hidden');
+        ctx.classList.remove('hidden');
+
+        // Prepare data (oldest to newest for graphing)
+        const sorted = [...matches].reverse();
+        const labels = sorted.map(m => new Date(m.date).toLocaleDateString(undefined, {month: 'short', day: 'numeric'}));
+        const dataPoints = sorted.map(m => m.pointsEarned);
+
+        if (matchChartInstance) {
+            matchChartInstance.destroy();
+        }
+
+        matchChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Points Earned',
+                    data: dataPoints,
+                    borderColor: '#4edea3',
+                    backgroundColor: 'rgba(78, 222, 163, 0.1)',
+                    tension: 0.3,
+                    fill: true,
+                    pointBackgroundColor: '#171f33',
+                    pointBorderColor: '#4edea3',
+                    pointHoverBackgroundColor: '#4edea3'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#738298' }
+                    },
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#738298' }
+                    }
+                }
+            }
+        });
+    }
+
+    // 5. --- Profile Settings ---
+    function openSettingsModal() {
+        const modal = document.getElementById('settings-modal');
+        document.getElementById('settings-name').value = document.getElementById('user-display-name').innerText;
+        modal.classList.remove('hidden');
+    }
+
+    function closeSettingsModal() {
+        document.getElementById('settings-modal').classList.add('hidden');
+        document.getElementById('settings-feedback').classList.add('hidden');
+    }
+
+    async function handleUpdateProfile(e) {
+        e.preventDefault();
+        const token = localStorage.getItem('sportlytics_token');
+        const name = document.getElementById('settings-name').value;
+        const feedback = document.getElementById('settings-feedback');
+
+        try {
+            const res = await fetch(`${API_URL}/user/profile`, {
+                method: 'PUT',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'x-auth-token': token
+                },
+                body: JSON.stringify({ name })
+            });
+
+            if (res.ok) {
+                const user = await res.json();
+                document.getElementById('user-display-name').innerText = user.name;
+                feedback.innerText = 'Profile Updated!';
+                feedback.className = "text-xs text-center font-bold p-2 rounded bg-primary/20 text-primary border border-primary/30 block";
+                
+                // Update local storage too to avoid desync
+                const localUser = JSON.parse(localStorage.getItem('sportlytics_user'));
+                localUser.name = user.name;
+                localStorage.setItem('sportlytics_user', JSON.stringify(localUser));
+
+                setTimeout(() => closeSettingsModal(), 1500);
+            } else {
+                feedback.innerText = 'Update failed.';
+                feedback.className = "text-xs text-center font-bold p-2 rounded bg-error/20 text-error block";
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('sportlytics_token');
+        localStorage.removeItem('sportlytics_user');
+        window.location.href = 'index.html';
+    }
+
+    // Run Auth Verification before rendering the page!
+    document.addEventListener('DOMContentLoaded', initDashboard);
+    // --- Autocomplete Logic ---
+    let debounceTimer;
+    const searchInput = document.getElementById('search-query');
+    const searchDropdown = document.getElementById('search-dropdown');
+    const proForm = document.getElementById('form-pro-search');
+
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(debounceTimer);
+        const query = e.target.value.trim();
+        
+        if (query.length < 2) {
+            searchDropdown.innerHTML = '';
+            searchDropdown.classList.add('hidden');
+            return;
+        }
+
+        debounceTimer = setTimeout(async () => {
+            try {
+                const res = await fetch(`https://www.thesportsdb.com/api/v1/json/3/searchplayers.php?p=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                
+                searchDropdown.innerHTML = '';
+                
+                if (data.player && data.player.length > 0) {
+                    // Limit to 5 results for clean UI
+                    const results = data.player.slice(0, 5);
+                    results.forEach(p => {
+                        const li = document.createElement('li');
+                        li.className = 'px-4 py-3 hover:bg-surface-container-highest cursor-pointer flex items-center gap-3 border-b border-surface-variant last:border-b-0 transition-colors';
+                        const thumb = p.strThumb || p.strCutout || 'https://via.placeholder.com/40';
+                        li.innerHTML = `
+                            <div class="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-background border border-primary/30">
+                                <img src="${thumb}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-bold text-on-surface leading-tight">${p.strPlayer}</p>
+                                <p class="text-xs text-on-surface/50 leading-tight">${p.strSport || 'Unknown'} &bull; ${p.strTeam || 'Unknown Team'}</p>
+                            </div>
+                        `;
+                        li.onclick = () => {
+                            searchInput.value = p.strPlayer;
+                            searchDropdown.classList.add('hidden');
+                            proForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                        };
+                        searchDropdown.appendChild(li);
+                    });
+                    searchDropdown.classList.remove('hidden');
+                } else {
+                    searchDropdown.innerHTML = `<li class="px-4 py-3 text-sm text-on-surface/50 italic text-center">No athletes found matching "${query}"</li>`;
+                    searchDropdown.classList.remove('hidden');
+                }
+            } catch (err) {
+                console.error('Autocomplete failed', err);
+            }
+        }, 300);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+            searchDropdown.classList.add('hidden');
+        }
+    });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Sportlytics | Global Leaderboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#171f33",
+                        "on-background": "#dae2fd",
+                        "primary": "#4edea3",
+                        "on-primary-fixed": "#002113",
+                        "surface-variant": "#2d3449",
+                        "background": "#0b1326",
+                        "surface-container-high": "#222a3d",
+                        "surface-container-lowest": "#060e20",
+                        "error": "#ffb4ab",
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background selection:bg-primary selection:text-surface-container">
+
+<nav class="w-full h-16 sticky top-0 z-50 bg-slate-950/50 backdrop-blur-md flex items-center justify-between px-8 md:px-12 border-b border-surface-variant/50">
+    <div class="flex items-center gap-8">
+        <a href="index.html" class="text-2xl font-extrabold tracking-tighter text-primary font-headline">Sportlytics</a>
+        <div class="hidden md:flex gap-6 items-center">
+            <a class="text-slate-300 hover:text-primary transition-colors" href="dashboard.html">Dashboard</a>
+            <a class="text-primary font-bold transition-colors" href="leaderboard.html">Leaderboard</a>
+        </div>
+    </div>
+</nav>
+
+<main class="max-w-4xl mx-auto px-6 py-12">
+    <div class="mb-12 text-center">
+        <h1 class="text-5xl font-headline font-extrabold tracking-tight mb-4 text-primary">Global Leaderboard</h1>
+        <p class="text-lg text-on-surface/60">The top 50 athletes across the Sportlytics network.</p>
+    </div>
+
+    <div class="bg-surface-container-high rounded-xl border border-white/5 overflow-hidden">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-surface-container text-xs uppercase tracking-widest text-on-surface/70 border-b border-white/10">
+                    <th class="py-4 px-6 font-bold w-16 text-center">Rank</th>
+                    <th class="py-4 px-6 font-bold">Athlete Name</th>
+                    <th class="py-4 px-6 font-bold text-right">Efficiency Score</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                <tr>
+                    <td colspan="3" class="py-8 text-center text-sm text-on-surface/50">
+                        <span class="material-symbols-outlined animate-spin text-4xl text-primary mb-2">refresh</span>
+                        <p>Fetching the ranks...</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<script>
+    async function loadLeaderboard() {
+        try {
+            const res = await fetch('http://127.0.0.1:5000/api/public/leaderboard?limit=50');
+            const users = await res.json();
+            const tbody = document.getElementById('leaderboard-body');
+            tbody.innerHTML = '';
+            
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="py-8 text-center text-sm text-on-surface/50">No athletes ranked yet.</td></tr>';
+                return;
+            }
+
+            users.forEach((u, i) => {
+                let badge = `<span class="text-on-surface/50 font-bold">${i + 1}</span>`;
+                if (i === 0) badge = `<span class="material-symbols-outlined text-yellow-400" title="1st Place">trophy</span>`;
+                else if (i === 1) badge = `<span class="material-symbols-outlined text-gray-300" title="2nd Place">military_tech</span>`;
+                else if (i === 2) badge = `<span class="material-symbols-outlined text-amber-600" title="3rd Place">military_tech</span>`;
+
+                tbody.innerHTML += `
+                <tr class="border-b border-white/5 hover:bg-surface-container/50 transition-colors">
+                    <td class="py-4 px-6 text-center">${badge}</td>
+                    <td class="py-4 px-6 font-bold text-on-surface">${u.name}</td>
+                    <td class="py-4 px-6 text-right font-headline font-bold text-primary">${u.efficiencyScore ? u.efficiencyScore.toFixed(1) : '0.0'}</td>
+                </tr>`;
+            });
+        } catch (err) {
+            console.error('Failed to fetch leaderboard');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadLeaderboard);
+</script>
+</body>
+</html>
