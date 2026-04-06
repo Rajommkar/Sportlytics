@@ -35,9 +35,57 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .font-headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #060e20; }
+        ::-webkit-scrollbar-thumb { background: #4edea3; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6ffbbe; }
+
+        .loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #060e20;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        .loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .loader-spinner {
+            width: 60px; height: 60px;
+            border: 4px solid rgba(78,222,163,0.15); border-top-color: #4edea3;
+            border-radius: 50%; animation: loaderSpin 0.8s linear infinite; position: relative;
+        }
+        .loader-spinner::after {
+            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 20px; height: 20px; background: #4edea3; border-radius: 50%;
+            animation: loaderPulse 1s ease-in-out infinite;
+        }
+        .loader-text { margin-top: 24px; font-weight: 800; color: #4edea3; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.5rem; letter-spacing: 6px; animation: pulseText 1.5s ease-in-out infinite; }
+        .loader-sub { margin-top: 8px; font-size: 0.7rem; color: rgba(218,226,253,0.4); letter-spacing: 3px; text-transform: uppercase; }
+        @keyframes loaderSpin { to { transform: rotate(360deg); } }
+        @keyframes loaderPulse { 0%, 100% { opacity: 0.3; transform: translate(-50%,-50%) scale(0.8); } 50% { opacity: 1; transform: translate(-50%,-50%) scale(1); } }
+        @keyframes pulseText { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .particle { position: absolute; width: 3px; height: 3px; background: #4edea3; border-radius: 50%; opacity: 0; animation: particleFloat 10s linear infinite; }
+        @keyframes particleFloat { 0% { opacity: 0; transform: translateY(100vh); } 10% { opacity: 0.4; } 90% { opacity: 0.4; } 100% { opacity: 0; transform: translateY(-10vh); } }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in-up { animation: fadeInUp 0.6s ease both; }
+
+        /* Row hover glow */
+        tr.leaderboard-row { transition: all 0.3s ease; }
+        tr.leaderboard-row:hover { background: rgba(78,222,163,0.05) !important; box-shadow: inset 3px 0 0 #4edea3; }
     </style>
 </head>
 <body class="bg-background text-on-background selection:bg-primary selection:text-surface-container">
+<!-- Loading Screen -->
+<div class="loading-screen" id="loadingScreen">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">SPORTLYTICS</div>
+    <div class="loader-sub">Loading Rankings</div>
+</div>
+<!-- Particles -->
+<div class="particles" id="particles"></div>
 
 <nav class="w-full h-16 sticky top-0 z-50 bg-slate-950/50 backdrop-blur-md flex items-center justify-between px-8 md:px-12 border-b border-surface-variant/50">
     <div class="flex items-center gap-8">
@@ -96,7 +144,7 @@
                 else if (i === 2) badge = `<span class="material-symbols-outlined text-amber-600" title="3rd Place">military_tech</span>`;
 
                 tbody.innerHTML += `
-                <tr class="border-b border-white/5 hover:bg-surface-container/50 transition-colors">
+                <tr class="fade-in-up leaderboard-row border-b border-white/5" style="animation-delay: ${i * 0.05}s">
                     <td class="py-4 px-6 text-center">${badge}</td>
                     <td class="py-4 px-6 font-bold text-on-surface">${u.name}</td>
                     <td class="py-4 px-6 text-right font-headline font-bold text-primary">${u.efficiencyScore ? u.efficiencyScore.toFixed(1) : '0.0'}</td>
@@ -107,7 +155,29 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', loadLeaderboard);
+    document.addEventListener('DOMContentLoaded', () => {
+        // Particles
+        const pc = document.getElementById('particles');
+        if (pc) {
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (Math.random() * 8 + 6) + 's';
+                p.style.animationDelay = Math.random() * 10 + 's';
+                p.style.width = (Math.random() * 3 + 1) + 'px';
+                p.style.height = p.style.width;
+                pc.appendChild(p);
+            }
+        }
+
+        loadLeaderboard().then(() => {
+            setTimeout(() => {
+                const loader = document.getElementById('loadingScreen');
+                if (loader) loader.classList.add('hidden');
+            }, 800);
+        });
+    });
 </script>
 </body>
 </html>

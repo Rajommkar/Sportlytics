@@ -82,9 +82,141 @@
         .font-headline { font-family: 'Plus Jakarta Sans', sans-serif; }
         .glass-panel { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
         .text-glow { text-shadow: 0 0 20px rgba(78, 222, 163, 0.4); }
+
+        /* === CUSTOM SCROLLBAR === */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #060e20; }
+        ::-webkit-scrollbar-thumb { background: #4edea3; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6ffbbe; }
+
+        /* === LOADING SCREEN === */
+        .loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #060e20;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        .loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .loader-spinner {
+            width: 60px; height: 60px;
+            border: 4px solid rgba(78,222,163,0.15);
+            border-top-color: #4edea3;
+            border-radius: 50%;
+            animation: loaderSpin 0.8s linear infinite;
+        }
+        .loader-spinner::after {
+            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 20px; height: 20px; background: #4edea3; border-radius: 50%;
+            animation: loaderPulse 1s ease-in-out infinite;
+        }
+        .loader-text {
+            margin-top: 24px; font-weight: 800; color: #4edea3;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.5rem; letter-spacing: 6px;
+            animation: pulseText 1.5s ease-in-out infinite;
+        }
+        .loader-sub { margin-top: 8px; font-size: 0.7rem; color: rgba(218,226,253,0.4); letter-spacing: 3px; text-transform: uppercase; }
+        @keyframes loaderSpin { to { transform: rotate(360deg); } }
+        @keyframes loaderPulse { 0%, 100% { opacity: 0.3; transform: translate(-50%,-50%) scale(0.8); } 50% { opacity: 1; transform: translate(-50%,-50%) scale(1); } }
+        @keyframes pulseText { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        /* === PARTICLES === */
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .particle {
+            position: absolute; width: 3px; height: 3px;
+            background: #4edea3; border-radius: 50%; opacity: 0;
+            animation: particleFloat 10s linear infinite;
+        }
+        @keyframes particleFloat {
+            0% { opacity: 0; transform: translateY(100vh) rotate(0deg); }
+            10% { opacity: 0.4; }
+            90% { opacity: 0.4; }
+            100% { opacity: 0; transform: translateY(-10vh) rotate(720deg); }
+        }
+
+        /* === SCROLL ANIMATIONS === */
+        .animate-on-scroll {
+            opacity: 0; transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in-up { animation: fadeInUp 0.6s ease both; }
+
+        /* === PREMIUM BUTTONS === */
+        .btn-premium {
+            position: relative; overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease;
+        }
+        .btn-premium::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: 0.6s ease;
+        }
+        .btn-premium:hover::before { left: 100%; }
+        .btn-premium:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 10px 40px rgba(78, 222, 163, 0.5);
+        }
+
+        /* === FEATURE CARD TOP BORDER REVEAL === */
+        .feature-card-hover { position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .feature-card-hover::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, #4edea3, #4cd7f6);
+            transform: scaleX(0); transition: transform 0.4s ease; transform-origin: left;
+        }
+        .feature-card-hover:hover::before { transform: scaleX(1); }
+        .feature-card-hover:hover {
+            transform: translateY(-8px);
+            border-color: rgba(78, 222, 163, 0.3) !important;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        /* === STATS COUNTER === */
+        .stat-number {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 3rem; font-weight: 900;
+            background: linear-gradient(135deg, #4edea3, #4cd7f6);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* === CTA ROTATING GLOW === */
+        .cta-glow { position: relative; overflow: hidden; }
+        .cta-glow::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(78,222,163,0.08) 0%, transparent 70%);
+            animation: rotateGlow 12s linear infinite;
+        }
+        @keyframes rotateGlow { to { transform: rotate(360deg); } }
+
+        /* === TOAST NOTIFICATIONS === */
+        .toast-container { position: fixed; top: 80px; right: 20px; z-index: 9998; display: flex; flex-direction: column; gap: 10px; }
+        .toast {
+            background: #171f33; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+            padding: 14px 20px; display: flex; align-items: center; gap: 12px;
+            min-width: 300px; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            animation: slideInRight 0.4s ease; transition: all 0.3s ease;
+        }
+        .toast.success { border-left: 4px solid #4edea3; }
+        .toast.error { border-left: 4px solid #ffb4ab; }
+        .toast.info { border-left: 4px solid #4cd7f6; }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
     </style>
 </head>
 <body class="bg-background text-on-background selection:bg-primary selection:text-on-primary">
+<!-- Loading Screen -->
+<div class="loading-screen" id="loadingScreen">
+    <div class="loader-spinner" style="position:relative;"></div>
+    <div class="loader-text">SPORTLYTICS</div>
+    <div class="loader-sub">Kinetic Precision</div>
+</div>
+<!-- Floating Particles -->
+<div class="particles" id="particles"></div>
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
 <!-- TopNavBar Suppression Logic: Rendered because this is the root landing destination -->
 <nav class="w-full h-16 sticky top-0 z-50 bg-slate-950/50 backdrop-blur-md flex items-center justify-between px-8 md:px-12">
 <div class="flex items-center gap-8">
@@ -104,7 +236,7 @@
 <!-- Auth Controls -->
 <div id="auth-unauthenticated" class="flex gap-2 items-center">
     <button onclick="openAuthModal('login')" class="px-4 py-1.5 text-sm font-bold text-on-surface hover:text-primary transition-colors">Sign In</button>
-    <button onclick="openAuthModal('register')" class="px-4 py-1.5 text-sm font-bold bg-primary text-on-primary-fixed rounded-full hover:scale-105 transition-transform shadow-[0_0_15px_rgba(78,222,163,0.3)]">Sign Up</button>
+    <button onclick="openAuthModal('register')" class="btn-premium px-4 py-1.5 text-sm font-bold bg-primary text-on-primary-fixed rounded-full shadow-[0_0_15px_rgba(78,222,163,0.3)] border border-primary">Sign Up</button>
 </div>
 <div id="auth-authenticated" class="hidden items-center gap-3">
     <div class="hidden md:block flex-col text-right">
@@ -137,7 +269,7 @@
                     Bridging the gap between amateur play and professional data. Real-time metrics for athletes who take their game seriously.
                 </p>
 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-<button onclick="handleProtectedRoute('register')" class="px-8 py-4 bg-gradient-to-br from-primary to-on-primary-container text-on-primary-fixed font-bold rounded-DEFAULT transition-all hover:shadow-[0_0_30px_rgba(78,222,163,0.3)] active:scale-95">
+<button onclick="handleProtectedRoute('register')" class="btn-premium px-8 py-4 bg-gradient-to-br from-primary to-on-primary-container text-on-primary-fixed font-bold rounded-DEFAULT active:scale-95 border border-primary">
                         Get Started
                     </button>
 <button onclick="handleProtectedRoute('login')" class="px-8 py-4 bg-surface-container-highest border border-secondary/20 text-secondary font-bold rounded-DEFAULT transition-all hover:bg-surface-bright active:scale-95">
@@ -174,7 +306,7 @@
 </div>
 <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
 <!-- Analytics Card -->
-<div class="md:col-span-8 bg-surface-container-low rounded-lg p-8 relative overflow-hidden group">
+<div class="md:col-span-8 bg-surface-container-low rounded-lg p-8 relative overflow-hidden group animate-on-scroll feature-card-hover border border-white/5">
 <div class="relative z-10 h-full flex flex-col justify-between">
 <div>
 <span class="material-symbols-outlined text-primary text-4xl mb-4" data-weight="fill">analytics</span>
@@ -191,7 +323,7 @@
 </div>
 </div>
 <!-- Player Profiles Card -->
-<div class="md:col-span-4 bg-surface-container-high rounded-lg p-8 flex flex-col justify-between border border-primary/5 hover:border-primary/20 transition-colors">
+<div class="md:col-span-4 bg-surface-container-high rounded-lg p-8 flex flex-col justify-between border border-white/5 animate-on-scroll feature-card-hover" style="transition-delay: 100ms;">
 <span class="material-symbols-outlined text-secondary text-4xl mb-4" data-weight="fill">account_circle</span>
 <h3 class="text-2xl font-headline font-bold mb-2">Player Profiles</h3>
 <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Build your professional-grade athletic CV. Share your stats with scouts, coaches, and clubs.</p>
@@ -204,7 +336,7 @@
 <a class="text-primary text-sm font-bold flex items-center hover:underline" href="#">Customize Profile <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span></a>
 </div>
 <!-- Leaderboards Card -->
-<div class="md:col-span-4 bg-surface-container-lowest rounded-lg p-8 border border-white/5 relative group cursor-default overflow-hidden">
+<div class="md:col-span-4 bg-surface-container-lowest rounded-lg p-8 border border-white/5 relative group cursor-default overflow-hidden animate-on-scroll feature-card-hover" style="transition-delay: 200ms;">
 <div class="relative z-10">
 <span class="material-symbols-outlined text-on-tertiary-container text-4xl mb-4" data-weight="fill">leaderboard</span>
 <h3 class="text-2xl font-headline font-bold mb-2">Local Leaderboards</h3>
@@ -215,7 +347,7 @@
 </div>
 </div>
 <!-- Community Card -->
-<div class="md:col-span-8 bg-surface-container-low rounded-lg p-8 flex flex-col md:flex-row gap-8 items-center">
+<div class="md:col-span-8 bg-surface-container-low rounded-lg p-8 flex flex-col md:flex-row gap-8 items-center animate-on-scroll feature-card-hover border border-white/5" style="transition-delay: 300ms;">
 <div class="flex-1">
 <h3 class="text-2xl font-headline font-bold mb-4">Amateur Pro Community</h3>
 <p class="text-on-surface-variant mb-6 italic">"Sportlytics changed how our local Sunday league operates. The data doesn't lie, and the competition has never been more intense."</p>
@@ -233,26 +365,49 @@
 </div>
 </div>
 </section>
+<!-- Stats Counter Section -->
+<section class="py-20 relative" style="background: linear-gradient(145deg, #1a1a2e, #16213e); border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
+<div class="max-w-6xl mx-auto px-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center" id="statsSection">
+        <div class="animate-on-scroll">
+            <div class="stat-number" data-target="50000">0</div>
+            <p class="text-on-surface-variant text-sm font-bold mt-2">Active Athletes</p>
+        </div>
+        <div class="animate-on-scroll" style="transition-delay:100ms;">
+            <div class="stat-number" data-target="120000">0</div>
+            <p class="text-on-surface-variant text-sm font-bold mt-2">Matches Logged</p>
+        </div>
+        <div class="animate-on-scroll" style="transition-delay:200ms;">
+            <div class="stat-number" data-target="350">0</div>
+            <p class="text-on-surface-variant text-sm font-bold mt-2">Cities Covered</p>
+        </div>
+        <div class="animate-on-scroll" style="transition-delay:300ms;">
+            <div class="stat-number" data-target="98">0</div>
+            <p class="text-on-surface-variant text-sm font-bold mt-2">Accuracy Rate %</p>
+        </div>
+    </div>
+</div>
+</section>
 <!-- CTA Section -->
-<section class="py-24 bg-surface-container-lowest">
-<div class="max-w-4xl mx-auto px-6 text-center">
-<h2 class="text-4xl md:text-5xl font-headline font-extrabold mb-6">Ready to dominate the leaderboard?</h2>
-<p class="text-on-surface-variant mb-10 text-lg">Join 50,000+ athletes already rising to the top with elite analytics.</p>
-<div class="flex flex-wrap justify-center gap-6">
-<div class="flex items-center gap-2 px-6 py-4 bg-surface-container rounded-lg">
+<section class="py-24 bg-surface-container-lowest cta-glow">
+<div class="max-w-4xl mx-auto px-6 text-center relative z-10">
+<h2 class="text-4xl md:text-5xl font-headline font-extrabold mb-6 animate-on-scroll">Ready to dominate the leaderboard?</h2>
+<p class="text-on-surface-variant mb-10 text-lg animate-on-scroll" style="transition-delay:100ms;">Join 50,000+ athletes already rising to the top with elite analytics.</p>
+<div class="flex flex-wrap justify-center gap-6 animate-on-scroll" style="transition-delay:200ms;">
+<div class="flex items-center gap-2 px-6 py-4 bg-surface-container rounded-lg feature-card-hover border border-white/5">
 <span class="material-symbols-outlined text-primary">verified</span>
 <span class="font-bold text-sm">Verified Stats</span>
 </div>
-<div class="flex items-center gap-2 px-6 py-4 bg-surface-container rounded-lg">
+<div class="flex items-center gap-2 px-6 py-4 bg-surface-container rounded-lg feature-card-hover border border-white/5">
 <span class="material-symbols-outlined text-secondary">share</span>
 <span class="font-bold text-sm">Social Integrations</span>
 </div>
-<div class="flex items-center gap-2 px-6 py-4 bg-surface-container rounded-lg">
+<div class="flex items-center gap-2 px-6 py-4 bg-surface-container rounded-lg feature-card-hover border border-white/5">
 <span class="material-symbols-outlined text-on-tertiary-container">history</span>
 <span class="font-bold text-sm">Progression Archiving</span>
 </div>
 </div>
-<button onclick="handleProtectedRoute('register')" class="mt-12 px-10 py-5 bg-primary text-on-primary-fixed text-lg font-extrabold rounded-full hover:scale-105 transition-transform">
+<button onclick="handleProtectedRoute('register')" class="btn-premium mt-12 px-10 py-5 bg-primary text-on-primary-fixed text-lg font-extrabold rounded-full border border-primary animate-on-scroll" style="transition-delay:300ms;">
                     Claim Your Profile Now
                 </button>
 </div>
@@ -265,16 +420,16 @@
 <p class="text-xs text-on-surface-variant uppercase tracking-widest font-bold">Kinetic Precision © 2024</p>
 </div>
 <div class="flex gap-8 text-sm font-medium text-on-surface-variant">
-<a class="hover:text-primary transition-colors" href="#">Privacy</a>
-<a class="hover:text-primary transition-colors" href="#">Terms</a>
-<a class="hover:text-primary transition-colors" href="#">Contact</a>
-<a class="hover:text-primary transition-colors" href="#">API</a>
+<a class="hover:text-primary hover:pl-1 transition-all duration-300" href="#">Privacy</a>
+<a class="hover:text-primary hover:pl-1 transition-all duration-300" href="#">Terms</a>
+<a class="hover:text-primary hover:pl-1 transition-all duration-300" href="#">Contact</a>
+<a class="hover:text-primary hover:pl-1 transition-all duration-300" href="#">API</a>
 </div>
 <div class="flex gap-4">
-<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-bright transition-colors" href="#">
+<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-primary hover:-translate-y-1 transition-all duration-300" href="#">
 <span class="material-symbols-outlined text-on-surface text-xl">language</span>
 </a>
-<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-bright transition-colors" href="#">
+<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-primary hover:-translate-y-1 transition-all duration-300" href="#">
 <span class="material-symbols-outlined text-on-surface text-xl">alternate_email</span>
 </a>
 </div>
@@ -311,7 +466,7 @@
                 <label class="block text-xs font-bold text-on-surface-variant mb-1 uppercase tracking-wider">Password</label>
                 <input type="password" id="login-password" required class="w-full bg-surface border border-outline-variant/50 rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" placeholder="••••••••">
             </div>
-            <button type="submit" class="w-full py-3 mt-4 bg-primary text-on-primary-fixed font-bold rounded-lg hover:bg-primary-fixed transition-colors shadow-[0_0_20px_rgba(78,222,163,0.2)]">Sign In</button>
+            <button type="submit" class="btn-premium w-full py-3 mt-4 bg-primary text-on-primary-fixed font-bold rounded-lg shadow-[0_0_20px_rgba(78,222,163,0.2)] border border-primary">Sign In</button>
         </form>
 
         <!-- Register Form -->
@@ -328,7 +483,7 @@
                 <label class="block text-xs font-bold text-on-surface-variant mb-1 uppercase tracking-wider">Password</label>
                 <input type="password" id="register-password" required class="w-full bg-surface border border-outline-variant/50 rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" placeholder="Create a strong password">
             </div>
-            <button type="submit" class="w-full py-3 mt-4 bg-primary text-on-primary-fixed font-bold rounded-lg hover:bg-primary-fixed transition-colors shadow-[0_0_20px_rgba(78,222,163,0.2)]">Create Account</button>
+            <button type="submit" class="btn-premium w-full py-3 mt-4 bg-primary text-on-primary-fixed font-bold rounded-lg shadow-[0_0_20px_rgba(78,222,163,0.2)] border border-primary">Create Account</button>
         </form>
     </div>
 </div>
@@ -507,7 +662,7 @@
             users.forEach((u, i) => {
                 const opacity = i > 1 ? 'opacity-50' : '';
                 list.innerHTML += `
-                <li class="flex items-center justify-between text-xs py-2 border-b border-outline-variant/10 ${opacity}">
+                <li class="fade-in-up flex items-center justify-between text-xs py-2 border-b border-outline-variant/10 ${opacity}" style="animation-delay: ${i * 0.1}s">
                     <span class="text-on-surface">${i + 1}. ${u.name}</span>
                     <span class="text-primary font-bold">${u.efficiencyScore ? u.efficiencyScore.toFixed(1) : '0.0'} pts</span>
                 </li>`;
@@ -519,9 +674,83 @@
 
     // Run when the page first loads
     document.addEventListener('DOMContentLoaded', () => {
+        // === PARTICLES ===
+        const particleContainer = document.getElementById('particles');
+        if (particleContainer) {
+            for (let i = 0; i < 25; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (Math.random() * 8 + 6) + 's';
+                p.style.animationDelay = Math.random() * 10 + 's';
+                p.style.width = (Math.random() * 3 + 1) + 'px';
+                p.style.height = p.style.width;
+                particleContainer.appendChild(p);
+            }
+        }
+
+        // === LOADING SCREEN ===
+        setTimeout(() => {
+            const loader = document.getElementById('loadingScreen');
+            if (loader) loader.classList.add('hidden');
+        }, 1200);
+
+        // === SCROLL OBSERVER ===
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+        // === STATS COUNTER ANIMATION ===
+        let statsAnimated = false;
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !statsAnimated) {
+                    statsAnimated = true;
+                    document.querySelectorAll('.stat-number').forEach(el => {
+                        const target = parseInt(el.getAttribute('data-target'));
+                        const duration = 2000;
+                        const step = target / (duration / 16);
+                        let current = 0;
+                        const timer = setInterval(() => {
+                            current += step;
+                            if (current >= target) {
+                                el.textContent = target >= 1000 ? (target/1000).toFixed(0) + 'K+' : target + '+';
+                                clearInterval(timer);
+                            } else {
+                                el.textContent = Math.floor(current) >= 1000 ? (Math.floor(current)/1000).toFixed(0) + 'K+' : Math.floor(current) + '+';
+                            }
+                        }, 16);
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+        const statsSection = document.getElementById('statsSection');
+        if (statsSection) statsObserver.observe(statsSection);
+
         checkAuthState();
         fetchLeaderboard();
     });
+
+    // === TOAST SYSTEM ===
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `
+            <span style="font-size:1.2rem;">${icons[type]}</span>
+            <span style="flex:1;font-size:0.9rem;">${message}</span>
+            <button onclick="this.parentElement.remove()" style="background:none;color:#909097;font-size:1.2rem;cursor:pointer;border:none;">×</button>
+        `;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    }
 </script>
 
 <!-- FAB Suppression: Suppressed for landing page focused on browsing/reading -->
