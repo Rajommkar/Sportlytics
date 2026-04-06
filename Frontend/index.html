@@ -144,6 +144,25 @@
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in-up { animation: fadeInUp 0.6s ease both; }
 
+        /* === HERO REVEAL === */
+        .hero-bg-reveal {
+            opacity: 0; transform: scale(1.15);
+            transition: opacity 1.2s ease, transform 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .hero-bg-reveal.revealed { opacity: 0.4; transform: scale(1); }
+
+        @keyframes heroFadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hero-animate { opacity: 0; animation: heroFadeIn 0.8s ease forwards; }
+
+        .hero-glass-reveal {
+            opacity: 0; transform: translateX(60px);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .hero-glass-reveal.revealed { opacity: 1; transform: translateX(0); }
+
         /* === PREMIUM BUTTONS === */
         .btn-premium {
             position: relative; overflow: hidden;
@@ -255,20 +274,20 @@
 <section class="relative min-h-[921px] flex flex-col justify-center items-center px-6 overflow-hidden">
 <!-- Background Image with Tonal Overlay -->
 <div class="absolute inset-0 -z-10">
-<img class="w-full h-full object-cover opacity-40" data-alt="Dynamic shot of an athlete sprinting on a dark track with sharp overhead lighting and misty atmospheric depth" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBr84hsqTrfqTfzsMjktnU8H5QK6TcvQW-AoLcccwetK0UQWhX2JwyZuiVxSN1Vkgp6KHIhcl8rbjZ-9y0NOtyNYvaZ-L8UcYmTr55AXaukOtJ-Yo_wUaz6QQARiW2rZpbR2EGoFgM2G6-Xc602KI8KIGEy8TGosfdar5FnFjggOXphomyQzphy90c_WpldRU4ctjdHuVWa6mos2gPjx-VwVSuC7hLG2BZAY1PP3uqrdK5f0o-_aZM_3HvCHfJLnKkXxKPpTsB_cvI"/>
+<img id="heroBgImage" class="w-full h-full object-cover hero-bg-reveal" data-alt="Dynamic shot of an athlete sprinting on a dark track with sharp overhead lighting and misty atmospheric depth" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBr84hsqTrfqTfzsMjktnU8H5QK6TcvQW-AoLcccwetK0UQWhX2JwyZuiVxSN1Vkgp6KHIhcl8rbjZ-9y0NOtyNYvaZ-L8UcYmTr55AXaukOtJ-Yo_wUaz6QQARiW2rZpbR2EGoFgM2G6-Xc602KI8KIGEy8TGosfdar5FnFjggOXphomyQzphy90c_WpldRU4ctjdHuVWa6mos2gPjx-VwVSuC7hLG2BZAY1PP3uqrdK5f0o-_aZM_3HvCHfJLnKkXxKPpTsB_cvI"/>
 <div class="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background"></div>
 </div>
 <div class="max-w-5xl text-center z-10">
-<div class="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-8">
+<div class="hero-animate inline-flex items-center px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-8" style="animation-delay: 1.3s;">
 <span class="text-xs font-bold tracking-widest text-primary uppercase">Elite Amateur Performance</span>
 </div>
-<h1 class="text-6xl md:text-8xl font-headline font-extrabold tracking-tight mb-6 leading-[1.1]">
+<h1 class="hero-animate text-6xl md:text-8xl font-headline font-extrabold tracking-tight mb-6 leading-[1.1]" style="animation-delay: 1.5s;">
                     Track. Analyze. <span class="text-primary text-glow">Rise.</span>
 </h1>
-<p class="text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto mb-10 leading-relaxed">
+<p class="hero-animate text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto mb-10 leading-relaxed" style="animation-delay: 1.7s;">
                     Bridging the gap between amateur play and professional data. Real-time metrics for athletes who take their game seriously.
                 </p>
-<div class="flex flex-col sm:flex-row gap-4 justify-center">
+<div class="hero-animate flex flex-col sm:flex-row gap-4 justify-center" style="animation-delay: 1.9s;">
 <button onclick="handleProtectedRoute('register')" class="btn-premium px-8 py-4 bg-gradient-to-br from-primary to-on-primary-container text-on-primary-fixed font-bold rounded-DEFAULT active:scale-95 border border-primary">
                         Get Started
                     </button>
@@ -278,7 +297,7 @@
 </div>
 </div>
 <!-- Floating Data Glass Card -->
-<div class="absolute -bottom-12 md:bottom-12 right-6 md:right-12 glass-panel bg-surface-container-lowest/70 p-6 rounded-lg shadow-xl border border-white/5 hidden lg:block w-72">
+<div id="heroGlassCard" class="absolute -bottom-12 md:bottom-12 right-6 md:right-12 glass-panel bg-surface-container-lowest/70 p-6 rounded-lg shadow-xl border border-white/5 hidden lg:block w-72 hero-glass-reveal">
 <div class="flex justify-between items-center mb-4">
 <span class="text-xs font-bold text-on-surface-variant uppercase">Peak Performance</span>
 <span class="material-symbols-outlined text-primary text-sm">trending_up</span>
@@ -689,10 +708,20 @@
             }
         }
 
-        // === LOADING SCREEN ===
+        // === LOADING SCREEN + HERO REVEAL ===
         setTimeout(() => {
             const loader = document.getElementById('loadingScreen');
             if (loader) loader.classList.add('hidden');
+
+            // Trigger hero background zoom-in reveal
+            const heroBg = document.getElementById('heroBgImage');
+            if (heroBg) heroBg.classList.add('revealed');
+
+            // Trigger glass card slide-in
+            setTimeout(() => {
+                const glassCard = document.getElementById('heroGlassCard');
+                if (glassCard) glassCard.classList.add('revealed');
+            }, 800);
         }, 1200);
 
         // === SCROLL OBSERVER ===
