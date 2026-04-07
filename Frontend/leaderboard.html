@@ -1,182 +1,161 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Sportlytics | Global Leaderboard</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "surface-container": "#171f33",
-                        "on-background": "#dae2fd",
-                        "primary": "#4edea3",
-                        "on-primary-fixed": "#002113",
-                        "surface-variant": "#2d3449",
-                        "background": "#0b1326",
-                        "surface-container-high": "#222a3d",
-                        "surface-container-lowest": "#060e20",
-                        "error": "#ffb4ab",
-                    },
-                    "fontFamily": {
-                        "headline": ["Plus Jakarta Sans"],
-                        "body": ["Inter"],
-                    }
-                },
-            },
-        }
-    </script>
+    <meta name="description" content="See where you rank among athletes worldwide. Filter by sport, view team standings.">
+    <link rel="stylesheet" href="css/shared.css">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .font-headline { font-family: 'Plus Jakarta Sans', sans-serif; }
-
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #060e20; }
-        ::-webkit-scrollbar-thumb { background: #4edea3; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6ffbbe; }
-
-        .loading-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #060e20;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 10000;
-            transition: opacity 0.6s ease, visibility 0.6s ease;
-        }
-        .loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        .loader-spinner {
-            width: 60px; height: 60px;
-            border: 4px solid rgba(78,222,163,0.15); border-top-color: #4edea3;
-            border-radius: 50%; animation: loaderSpin 0.8s linear infinite; position: relative;
-        }
-        .loader-spinner::after {
-            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 20px; height: 20px; background: #4edea3; border-radius: 50%;
-            animation: loaderPulse 1s ease-in-out infinite;
-        }
-        .loader-text { margin-top: 24px; font-weight: 800; color: #4edea3; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.5rem; letter-spacing: 6px; animation: pulseText 1.5s ease-in-out infinite; }
-        .loader-sub { margin-top: 8px; font-size: 0.7rem; color: rgba(218,226,253,0.4); letter-spacing: 3px; text-transform: uppercase; }
-        @keyframes loaderSpin { to { transform: rotate(360deg); } }
-        @keyframes loaderPulse { 0%, 100% { opacity: 0.3; transform: translate(-50%,-50%) scale(0.8); } 50% { opacity: 1; transform: translate(-50%,-50%) scale(1); } }
-        @keyframes pulseText { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
-        .particle { position: absolute; width: 3px; height: 3px; background: #4edea3; border-radius: 50%; opacity: 0; animation: particleFloat 10s linear infinite; }
-        @keyframes particleFloat { 0% { opacity: 0; transform: translateY(100vh); } 10% { opacity: 0.4; } 90% { opacity: 0.4; } 100% { opacity: 0; transform: translateY(-10vh); } }
-
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-in-up { animation: fadeInUp 0.6s ease both; }
-
-        /* Row hover glow */
-        tr.leaderboard-row { transition: all 0.3s ease; }
-        tr.leaderboard-row:hover { background: rgba(78,222,163,0.05) !important; box-shadow: inset 3px 0 0 #4edea3; }
+        tr.lb-row { transition: all 0.3s ease; }
+        tr.lb-row:hover { background: rgba(78,222,163,0.05) !important; box-shadow: inset 3px 0 0 var(--primary); }
+        .filter-bar { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem; align-items: center; justify-content: center; }
     </style>
 </head>
-<body class="bg-background text-on-background selection:bg-primary selection:text-surface-container">
-<!-- Loading Screen -->
+<body>
 <div class="loading-screen" id="loadingScreen">
     <div class="loader-spinner"></div>
     <div class="loader-text">SPORTLYTICS</div>
     <div class="loader-sub">Loading Rankings</div>
 </div>
-<!-- Particles -->
 <div class="particles" id="particles"></div>
+<div class="toast-container" id="toastContainer"></div>
 
-<nav class="w-full h-16 sticky top-0 z-50 bg-slate-950/50 backdrop-blur-md flex items-center justify-between px-8 md:px-12 border-b border-surface-variant/50">
-    <div class="flex items-center gap-8">
-        <a href="index.html" class="text-2xl font-extrabold tracking-tighter text-primary font-headline">Sportlytics</a>
-        <div class="hidden md:flex gap-6 items-center">
-            <a class="text-slate-300 hover:text-primary transition-colors" href="dashboard.html">Dashboard</a>
-            <a class="text-primary font-bold transition-colors" href="leaderboard.html">Leaderboard</a>
+<!-- Mobile Menu -->
+<div class="mobile-menu hidden" id="mobileMenu">
+    <button onclick="toggleMobileMenu()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text);cursor:pointer;"><span class="material-symbols-outlined" style="font-size:2rem;">close</span></button>
+    <a href="index.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="leaderboard.html" style="color:var(--primary);">Leaderboard</a>
+</div>
+
+<nav style="width:100%;height:64px;position:sticky;top:0;z-index:50;background:rgba(6,14,32,0.7);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;border-bottom:1px solid var(--border);">
+    <div style="display:flex;align-items:center;gap:2rem;">
+        <a href="index.html" class="font-headline" style="font-size:1.5rem;font-weight:800;color:var(--primary);text-decoration:none;letter-spacing:-0.05em;">Sportlytics</a>
+        <div style="display:none;gap:1.5rem;align-items:center;" class="desktop-nav">
+            <a href="dashboard.html" style="color:var(--text-muted);font-weight:700;font-size:0.85rem;text-decoration:none;">Dashboard</a>
+            <a href="leaderboard.html" style="color:var(--primary);font-weight:700;font-size:0.85rem;text-decoration:none;">Leaderboard</a>
         </div>
     </div>
+    <button onclick="toggleMobileMenu()" class="mobile-nav-btn" style="background:none;border:none;color:var(--text);cursor:pointer;display:block;"><span class="material-symbols-outlined">menu</span></button>
 </nav>
+<style>@media(min-width:768px) { .desktop-nav { display:flex !important; } .mobile-nav-btn { display:none !important; } }</style>
 
-<main class="max-w-4xl mx-auto px-6 py-12">
-    <div class="mb-12 text-center">
-        <h1 class="text-5xl font-headline font-extrabold tracking-tight mb-4 text-primary">Global Leaderboard</h1>
-        <p class="text-lg text-on-surface/60">The top 50 athletes across the Sportlytics network.</p>
+<main style="max-width:900px;margin:0 auto;padding:2rem 1.5rem;">
+    <div style="text-align:center;margin-bottom:2rem;">
+        <h1 class="font-headline stat-value" style="font-size:3rem;-webkit-text-fill-color:var(--primary);">Global Leaderboard</h1>
+        <p style="color:var(--text-muted);margin-top:0.5rem;">Top athletes across the Sportlytics network.</p>
     </div>
 
-    <div class="bg-surface-container-high rounded-xl border border-white/5 overflow-hidden">
-        <table class="w-full text-left border-collapse">
-            <thead>
-                <tr class="bg-surface-container text-xs uppercase tracking-widest text-on-surface/70 border-b border-white/10">
-                    <th class="py-4 px-6 font-bold w-16 text-center">Rank</th>
-                    <th class="py-4 px-6 font-bold">Athlete Name</th>
-                    <th class="py-4 px-6 font-bold text-right">Efficiency Score</th>
-                </tr>
-            </thead>
-            <tbody id="leaderboard-body">
-                <tr>
-                    <td colspan="3" class="py-8 text-center text-sm text-on-surface/50">
-                        <span class="material-symbols-outlined animate-spin text-4xl text-primary mb-2">refresh</span>
-                        <p>Fetching the ranks...</p>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- Tabs: Athletes vs Teams -->
+    <div style="display:flex;justify-content:center;gap:0.75rem;margin-bottom:1.5rem;">
+        <button class="tab-btn active" id="tab-athletes" onclick="switchLBTab('athletes')">Athletes</button>
+        <button class="tab-btn" id="tab-teams" onclick="switchLBTab('teams')">Teams</button>
+    </div>
+
+    <!-- Athletes Section -->
+    <div id="athletes-section">
+        <div class="filter-bar">
+            <select id="lb-sport-filter" class="input" style="width:auto;padding:0.4rem 1rem;font-size:0.8rem;" onchange="loadLeaderboard()">
+                <option value="all">All Sports</option>
+                <option value="football">⚽ Football</option>
+                <option value="basketball">🏀 Basketball</option>
+                <option value="cricket">🏏 Cricket</option>
+                <option value="running">🏃 Running</option>
+                <option value="tennis">🎾 Tennis</option>
+                <option value="swimming">🏊 Swimming</option>
+                <option value="cycling">🚴 Cycling</option>
+                <option value="other">💪 Other</option>
+            </select>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width:60px;text-align:center;">Rank</th>
+                        <th>Athlete</th>
+                        <th>Sports</th>
+                        <th style="text-align:center;">Matches</th>
+                        <th style="text-align:right;">Score</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body">
+                    <tr><td colspan="5" style="text-align:center;padding:3rem;color:var(--text-muted);">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Teams Section -->
+    <div id="teams-section" class="hidden">
+        <div class="card" style="padding:0;overflow:hidden;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width:60px;text-align:center;">Rank</th>
+                        <th>Team</th>
+                        <th>Sport</th>
+                        <th style="text-align:center;">Members</th>
+                        <th style="text-align:right;">Total Score</th>
+                    </tr>
+                </thead>
+                <tbody id="team-lb-body">
+                    <tr><td colspan="5" style="text-align:center;padding:3rem;color:var(--text-muted);">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </main>
 
+<script src="js/shared.js"></script>
 <script>
+    function switchLBTab(tab) {
+        document.getElementById('athletes-section').classList.toggle('hidden', tab !== 'athletes');
+        document.getElementById('teams-section').classList.toggle('hidden', tab !== 'teams');
+        document.getElementById('tab-athletes').classList.toggle('active', tab === 'athletes');
+        document.getElementById('tab-teams').classList.toggle('active', tab === 'teams');
+        if (tab === 'teams') loadTeamLeaderboard();
+    }
+
     async function loadLeaderboard() {
+        const sport = document.getElementById('lb-sport-filter')?.value || 'all';
         try {
-            const res = await fetch('http://127.0.0.1:5000/api/public/leaderboard?limit=50');
+            const url = sport === 'all' ? `${API_URL}/public/leaderboard?limit=50` : `${API_URL}/public/leaderboard?limit=50&sport=${sport}`;
+            const res = await fetch(url);
             const users = await res.json();
             const tbody = document.getElementById('leaderboard-body');
-            tbody.innerHTML = '';
-            
-            if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" class="py-8 text-center text-sm text-on-surface/50">No athletes ranked yet.</td></tr>';
-                return;
-            }
+            if (users.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:3rem;color:var(--text-muted);">No athletes ranked yet.</td></tr>'; return; }
+            tbody.innerHTML = users.map((u, i) => {
+                let badge = `<span style="color:var(--text-muted);font-weight:800;">${i + 1}</span>`;
+                if (i === 0) badge = '<span class="material-symbols-outlined" style="color:#facc15;">trophy</span>';
+                else if (i === 1) badge = '<span class="material-symbols-outlined" style="color:#d1d5db;">military_tech</span>';
+                else if (i === 2) badge = '<span class="material-symbols-outlined" style="color:#d97706;">military_tech</span>';
+                const sports = (u.sports || []).map(s => { const info = SPORT_OPTIONS.find(o => o.value === s); const c = SPORT_COLORS[s] || '#6b7280'; return `<span class="sport-tag" style="background:${c}22;color:${c};border:1px solid ${c}44;font-size:0.6rem;">${info ? info.label : s}</span>`; }).join('');
+                return `<tr class="fade-in-up lb-row" style="animation-delay:${i*0.03}s"><td style="text-align:center;">${badge}</td><td style="font-weight:700;">${u.name}${u.badges && u.badges.length > 0 ? ' <span style="font-size:0.65rem;color:var(--text-muted);">🏅×' + u.badges.length + '</span>' : ''}</td><td>${sports || '<span style="color:var(--text-muted);font-size:0.75rem;">-</span>'}</td><td style="text-align:center;">${u.totalMatchesLogged || 0}</td><td style="text-align:right;font-weight:800;color:var(--primary);">${u.efficiencyScore ? u.efficiencyScore.toFixed(1) : '0.0'}</td></tr>`;
+            }).join('');
+        } catch (err) { console.error('Failed to fetch leaderboard'); }
+    }
 
-            users.forEach((u, i) => {
-                let badge = `<span class="text-on-surface/50 font-bold">${i + 1}</span>`;
-                if (i === 0) badge = `<span class="material-symbols-outlined text-yellow-400" title="1st Place">trophy</span>`;
-                else if (i === 1) badge = `<span class="material-symbols-outlined text-gray-300" title="2nd Place">military_tech</span>`;
-                else if (i === 2) badge = `<span class="material-symbols-outlined text-amber-600" title="3rd Place">military_tech</span>`;
-
-                tbody.innerHTML += `
-                <tr class="fade-in-up leaderboard-row border-b border-white/5" style="animation-delay: ${i * 0.05}s">
-                    <td class="py-4 px-6 text-center">${badge}</td>
-                    <td class="py-4 px-6 font-bold text-on-surface">${u.name}</td>
-                    <td class="py-4 px-6 text-right font-headline font-bold text-primary">${u.efficiencyScore ? u.efficiencyScore.toFixed(1) : '0.0'}</td>
-                </tr>`;
-            });
-        } catch (err) {
-            console.error('Failed to fetch leaderboard');
-        }
+    async function loadTeamLeaderboard() {
+        try {
+            const res = await fetch(`${API_URL}/public/team-leaderboard?limit=20`);
+            const teams = await res.json();
+            const tbody = document.getElementById('team-lb-body');
+            if (teams.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:3rem;color:var(--text-muted);">No teams created yet.</td></tr>'; return; }
+            tbody.innerHTML = teams.map((t, i) => {
+                let badge = `<span style="color:var(--text-muted);font-weight:800;">${i+1}</span>`;
+                if (i === 0) badge = '<span class="material-symbols-outlined" style="color:#facc15;">trophy</span>';
+                else if (i === 1) badge = '<span class="material-symbols-outlined" style="color:#d1d5db;">military_tech</span>';
+                else if (i === 2) badge = '<span class="material-symbols-outlined" style="color:#d97706;">military_tech</span>';
+                const c = SPORT_COLORS[t.sport] || '#6b7280';
+                return `<tr class="fade-in-up lb-row" style="animation-delay:${i*0.04}s"><td style="text-align:center;">${badge}</td><td style="font-weight:700;">${t.name}<br><span style="font-size:0.65rem;color:var(--text-muted);">Captain: ${t.captain?.name || '?'}</span></td><td><span class="sport-tag" style="background:${c}22;color:${c};border:1px solid ${c}44;">${t.sport}</span></td><td style="text-align:center;">${t.memberCount}</td><td style="text-align:right;font-weight:800;color:var(--primary);">${t.totalScore?.toFixed(1) || '0.0'}</td></tr>`;
+            }).join('');
+        } catch (err) { console.error(err); }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Particles
-        const pc = document.getElementById('particles');
-        if (pc) {
-            for (let i = 0; i < 20; i++) {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                p.style.left = Math.random() * 100 + '%';
-                p.style.animationDuration = (Math.random() * 8 + 6) + 's';
-                p.style.animationDelay = Math.random() * 10 + 's';
-                p.style.width = (Math.random() * 3 + 1) + 'px';
-                p.style.height = p.style.width;
-                pc.appendChild(p);
-            }
-        }
-
-        loadLeaderboard().then(() => {
-            setTimeout(() => {
-                const loader = document.getElementById('loadingScreen');
-                if (loader) loader.classList.add('hidden');
-            }, 800);
-        });
+        initParticles();
+        loadLeaderboard().then(() => { setTimeout(hideLoader, 800); });
     });
 </script>
 </body>

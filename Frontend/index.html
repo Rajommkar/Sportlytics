@@ -236,7 +236,13 @@
 <div class="particles" id="particles"></div>
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
-<!-- TopNavBar Suppression Logic: Rendered because this is the root landing destination -->
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="fixed inset-0 z-[90] bg-[#060e20ee] backdrop-blur-md flex flex-col items-center justify-center gap-8 hidden">
+    <button onclick="document.getElementById('mobileMenu').classList.add('hidden')" class="absolute top-4 right-4 material-symbols-outlined text-on-surface text-3xl">close</button>
+    <a href="dashboard.html" class="text-2xl font-headline font-extrabold text-on-surface hover:text-primary">Dashboard</a>
+    <a href="leaderboard.html" class="text-2xl font-headline font-extrabold text-on-surface hover:text-primary">Leaderboard</a>
+    <button onclick="document.getElementById('mobileMenu').classList.add('hidden');openAuthModal('login')" class="text-2xl font-headline font-extrabold text-primary">Sign In</button>
+</div>
 <nav class="w-full h-16 sticky top-0 z-50 bg-slate-950/50 backdrop-blur-md flex items-center justify-between px-8 md:px-12">
 <div class="flex items-center gap-8">
 <span class="text-2xl font-extrabold tracking-tighter text-primary font-headline">Sportlytics</span>
@@ -252,6 +258,7 @@
 <input readonly onclick="handleProtectedRoute('login')" class="bg-transparent border-none text-sm focus:ring-0 p-0 text-on-surface w-32 md:w-48 cursor-pointer" placeholder="Search athlete (Go to Dashboard)" type="text"/>
 </form>
 <button class="material-symbols-outlined text-slate-300 hover:text-primary p-2 transition-transform active:scale-90">notifications</button>
+<button onclick="document.getElementById('mobileMenu').classList.remove('hidden')" class="md:hidden material-symbols-outlined text-slate-300 hover:text-primary p-2">menu</button>
 <!-- Auth Controls -->
 <div id="auth-unauthenticated" class="flex gap-2 items-center">
     <button onclick="openAuthModal('login')" class="px-4 py-1.5 text-sm font-bold text-on-surface hover:text-primary transition-colors">Sign In</button>
@@ -436,7 +443,7 @@
 <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
 <div class="flex flex-col items-center md:items-start">
 <span class="text-2xl font-extrabold tracking-tighter text-primary font-headline mb-2">Sportlytics</span>
-<p class="text-xs text-on-surface-variant uppercase tracking-widest font-bold">Kinetic Precision © 2024</p>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest font-bold">Kinetic Precision © <script>document.write(new Date().getFullYear())</script></p>
 </div>
 <div class="flex gap-8 text-sm font-medium text-on-surface-variant">
 <a class="hover:text-primary hover:pl-1 transition-all duration-300" href="#">Privacy</a>
