@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 
 // --- Validation Helpers ---
 function validateEmail(email) {
@@ -142,6 +143,82 @@ router.post('/login', async (req, res) => {
             }
         );
     } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// @route   POST /api/auth/forgot-password
+// @desc    Send password reset email
+router.post('/forgot-password', async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ message: 'Email is required' });
+
+        const user = await User.findOne({ email: email.toLowerCase().trim() });
+        if (!user) {
+            // Don't reveal whether email exists
+            return res.json({ message: 'If that email is registered, a reset link has been sent.' });
+        }
+
+        // Create a reset token (short-lived)
+        const resetToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '15m' });
+
+        // Send email via Ethereal (test service — works without real SMTP)
+        const testAccount = await nodemailer.createTestAccount();
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.ethereal.email',
+            port: 587,
+            secure: false,
+            auth: { user: testAccount.user, pass: testAccount.pass }
+        });
+
+        const resetUrl = `http://localhost:5500/Frontend/reset-password.html?token=${resetToken}`;
+        const info = await transporter.sendMail({
+            from: '"Sportlytics" <noreply@sportlytics.app>',
+            to: user.email,
+            subject: 'Sportlytics — Reset Your Password',
+            html: `<div style="font-family:Arial;max-width:500px;margin:0 auto;padding:2rem;background:#0b1326;color:#dae2fd;border-radius:1rem;">
+                <h2 style="color:#4edea3;">Password Reset</h2>
+                <p>Hi ${user.name},</p>
+                <p>Click the button below to reset your password. This link expires in 15 minutes.</p>
+                <a href="${resetUrl}" style="display:inline-block;padding:12px 24px;background:#4edea3;color:#002113;font-weight:bold;border-radius:8px;text-decoration:none;margin:1rem 0;">Reset Password</a>
+                <p style="font-size:0.8rem;color:#738298;">If you didn't request this, ignore this email.</p>
+            </div>`
+        });
+
+        // Log the preview URL (since Ethereal is a test service)
+        console.log('🔗 Password reset email preview:', nodemailer.getTestMessageUrl(info));
+
+        res.json({ message: 'If that email is registered, a reset link has been sent.' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// @route   POST /api/auth/reset-password
+// @desc    Reset password using token
+router.post('/reset-password', async (req, res) => {
+    try {
+        const { token, newPassword } = req.body;
+        if (!token || !newPassword) return res.status(400).json({ message: 'Token and new password are required' });
+        if (newPassword.length < 6 || !/[a-zA-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+            return res.status(400).json({ message: 'Password must be at least 6 characters with 1 letter and 1 number' });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.userId);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+        await user.save();
+
+        res.json({ message: 'Password reset successfully. You can now log in.' });
+    } catch (err) {
+        if (err.name === 'TokenExpiredError') return res.status(400).json({ message: 'Reset link has expired. Please request a new one.' });
+        if (err.name === 'JsonWebTokenError') return res.status(400).json({ message: 'Invalid reset link.' });
         console.error(err.message);
         res.status(500).send('Server Error');
     }

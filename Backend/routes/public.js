@@ -103,4 +103,21 @@ router.get('/stats', async (req, res) => {
     }
 });
 
+// @route   GET /api/public/search?q=name
+// @desc    Search users by name (for head-to-head)
+router.get('/search', async (req, res) => {
+    try {
+        const q = req.query.q;
+        if (!q || q.length < 2) return res.json([]);
+        const users = await User.find({
+            name: { $regex: q, $options: 'i' },
+            profilePublic: true
+        }).limit(10).select('name efficiencyScore totalMatchesLogged sports');
+        res.json(users);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;

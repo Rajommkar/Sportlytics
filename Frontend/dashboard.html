@@ -225,8 +225,37 @@
             <div id="pro-loading" class="hidden" style="text-align:center;padding:3rem;"><span class="material-symbols-outlined" style="font-size:3rem;color:var(--primary);animation:loaderSpin 0.8s linear infinite;">refresh</span><p style="margin-top:0.5rem;color:var(--primary);font-weight:700;">Accessing Global DB...</p></div>
             <div id="pro-empty" style="text-align:center;padding:3rem;border:2px dashed var(--border);border-radius:0.75rem;"><span class="material-symbols-outlined" style="font-size:2.5rem;color:var(--text-muted);">database</span><p style="color:var(--text-muted);font-weight:700;margin-top:0.5rem;">Awaiting Input</p></div>
         </div>
+
+        <!-- Head-to-Head Compare -->
+        <div class="card animate-on-scroll" style="transition-delay:500ms;">
+            <h3 class="font-headline" style="font-size:1.1rem;font-weight:800;margin-bottom:0.5rem;"><span class="material-symbols-outlined" style="color:var(--primary);vertical-align:middle;">compare_arrows</span> Head-to-Head Compare</h3>
+            <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1rem;">Compare your stats with another athlete on the platform.</p>
+            <div style="position:relative;margin-bottom:1rem;">
+                <div style="display:flex;align-items:center;background:var(--surface-lowest);border-radius:9999px;padding:0 1rem;border:1px solid var(--border);">
+                    <span class="material-symbols-outlined" style="color:var(--primary);">person_search</span>
+                    <input type="text" id="compare-search" class="input" style="border:none;background:transparent;border-radius:0;" placeholder="Search athlete to compare..." autocomplete="off">
+                </div>
+                <ul id="compare-dropdown" class="hidden" style="position:absolute;top:100%;left:0;width:100%;margin-top:0.5rem;background:var(--surface-high);border:1px solid var(--border);border-radius:0.75rem;overflow:hidden;z-index:50;max-height:12rem;overflow-y:auto;list-style:none;box-shadow:0 8px 32px rgba(0,0,0,0.5);"></ul>
+            </div>
+            <div id="compare-result" style="padding:0.5rem 0;">
+                <div style="text-align:center;padding:2rem;border:2px dashed var(--border);border-radius:0.75rem;">
+                    <span class="material-symbols-outlined" style="font-size:2.5rem;color:var(--text-muted);">groups</span>
+                    <p style="color:var(--text-muted);font-weight:700;margin-top:0.5rem;">Search an athlete above to compare</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Share Stats Card -->
+        <div class="card animate-on-scroll" style="transition-delay:550ms;text-align:center;">
+            <h3 class="font-headline" style="font-size:1.1rem;font-weight:800;margin-bottom:0.5rem;"><span class="material-symbols-outlined" style="color:var(--primary);vertical-align:middle;">share</span> Share Your Stats</h3>
+            <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1rem;">Download a shareable stats card image for social media.</p>
+            <button onclick="generateShareCard()" class="btn-premium" style="padding:0.75rem 2rem;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#002113;font-weight:800;border-radius:9999px;border:none;font-size:0.9rem;">Download Stats Card 📸</button>
+        </div>
     </div>
 </main>
+
+<!-- Hidden canvas for share card generation -->
+<canvas id="shareCanvas" width="600" height="400" style="display:none;"></canvas>
 
 <!-- Settings Modal -->
 <div class="modal-overlay hidden" id="settings-modal">

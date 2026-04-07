@@ -446,16 +446,16 @@
 <p class="text-xs text-on-surface-variant uppercase tracking-widest font-bold">Kinetic Precision © <script>document.write(new Date().getFullYear())</script></p>
 </div>
 <div class="flex gap-8 text-sm font-medium text-on-surface-variant">
-<a class="hover:text-primary hover:pl-1 transition-all duration-300" href="#">Privacy</a>
-<a class="hover:text-primary hover:pl-1 transition-all duration-300" href="#">Terms</a>
-<a class="hover:text-primary hover:pl-1 transition-all duration-300" href="#">Contact</a>
-<a class="hover:text-primary hover:pl-1 transition-all duration-300" href="#">API</a>
+<a class="hover:text-primary hover:pl-1 transition-all duration-300" href="privacy.html">Privacy</a>
+<a class="hover:text-primary hover:pl-1 transition-all duration-300" href="terms.html">Terms</a>
+<a class="hover:text-primary hover:pl-1 transition-all duration-300" href="contact.html">Contact</a>
+<a class="hover:text-primary hover:pl-1 transition-all duration-300" href="api.html">API</a>
 </div>
 <div class="flex gap-4">
-<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-primary hover:-translate-y-1 transition-all duration-300" href="#">
+<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-primary hover:-translate-y-1 transition-all duration-300" href="https://sportlytics.app" target="_blank">
 <span class="material-symbols-outlined text-on-surface text-xl">language</span>
 </a>
-<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-primary hover:-translate-y-1 transition-all duration-300" href="#">
+<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-primary hover:-translate-y-1 transition-all duration-300" href="mailto:support@sportlytics.app">
 <span class="material-symbols-outlined text-on-surface text-xl">alternate_email</span>
 </a>
 </div>
@@ -493,6 +493,18 @@
                 <input type="password" id="login-password" required class="w-full bg-surface border border-outline-variant/50 rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" placeholder="••••••••">
             </div>
             <button type="submit" class="btn-premium w-full py-3 mt-4 bg-primary text-on-primary-fixed font-bold rounded-lg shadow-[0_0_20px_rgba(78,222,163,0.2)] border border-primary">Sign In</button>
+            <p class="text-center mt-3"><a onclick="switchTab('forgot')" class="text-xs text-primary cursor-pointer hover:underline font-bold">Forgot Password?</a></p>
+        </form>
+
+        <!-- Forgot Password Form -->
+        <form id="form-forgot" class="space-y-4 hidden" onsubmit="handleForgotPassword(event)">
+            <p class="text-xs text-on-surface-variant mb-2">Enter your email and we'll send a password reset link.</p>
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1 uppercase tracking-wider">Email</label>
+                <input type="email" id="forgot-email" required class="w-full bg-surface border border-outline-variant/50 rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" placeholder="player@club.com">
+            </div>
+            <button type="submit" class="btn-premium w-full py-3 mt-4 bg-primary text-on-primary-fixed font-bold rounded-lg shadow-[0_0_20px_rgba(78,222,163,0.2)] border border-primary">Send Reset Link</button>
+            <p class="text-center mt-2"><a onclick="switchTab('login')" class="text-xs text-on-surface-variant cursor-pointer hover:text-primary font-bold">Back to Sign In</a></p>
         </form>
 
         <!-- Register Form -->
@@ -520,6 +532,7 @@
     const modalCard = document.getElementById('auth-modal-card');
     const formLogin = document.getElementById('form-login');
     const formRegister = document.getElementById('form-register');
+    const formForgot = document.getElementById('form-forgot');
     const tabLogin = document.getElementById('tab-login');
     const tabRegister = document.getElementById('tab-register');
     const authError = document.getElementById('auth-error');
@@ -546,16 +559,23 @@
     function switchTab(tab) {
         authError.classList.add('hidden');
         authSuccess.classList.add('hidden');
+        
+        // Reset all active states
+        formLogin.classList.add('hidden');
+        formRegister.classList.add('hidden');
+        if (formForgot) formForgot.classList.add('hidden');
+        tabLogin.className = "text-lg font-headline font-bold text-on-surface-variant hover:text-on-surface px-2 pb-1 transition-colors";
+        tabRegister.className = "text-lg font-headline font-bold text-on-surface-variant hover:text-on-surface px-2 pb-1 transition-colors";
+
         if (tab === 'login') {
             formLogin.classList.remove('hidden');
-            formRegister.classList.add('hidden');
             tabLogin.className = "text-lg font-headline font-bold text-primary border-b-2 border-primary px-2 pb-1";
-            tabRegister.className = "text-lg font-headline font-bold text-on-surface-variant hover:text-on-surface px-2 pb-1 transition-colors";
-        } else {
+        } else if (tab === 'register') {
             formRegister.classList.remove('hidden');
-            formLogin.classList.add('hidden');
             tabRegister.className = "text-lg font-headline font-bold text-primary border-b-2 border-primary px-2 pb-1";
-            tabLogin.className = "text-lg font-headline font-bold text-on-surface-variant hover:text-on-surface px-2 pb-1 transition-colors";
+        } else if (tab === 'forgot') {
+            if (formForgot) formForgot.classList.remove('hidden');
+            // Make both tabs inactive visually
         }
     }
 
@@ -620,6 +640,36 @@
             }
         } catch (err) {
             showError('Network error connecting to backend.');
+        }
+    }
+
+    async function handleForgotPassword(e) {
+        e.preventDefault();
+        const email = document.getElementById('forgot-email').value;
+        const btn = e.target.querySelector('button[type="submit"]');
+        const oldText = btn.innerText;
+        btn.innerText = 'Sending...';
+        btn.disabled = true;
+
+        try {
+            const res = await fetch(`${API_URL}/forgot-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            const data = await res.json();
+            
+            if (res.ok) {
+                showSuccess(data.message);
+                setTimeout(() => { switchTab('login'); }, 3000);
+            } else {
+                showError(data.message || 'Failed to send reset link');
+            }
+        } catch (err) {
+            showError('Network error connecting to backend.');
+        } finally {
+            btn.innerText = oldText;
+            btn.disabled = false;
         }
     }
 

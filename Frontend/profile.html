@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Sportlytics | Athlete Profile</title>
+    <meta name="description" content="View athlete performance profile, badges, and stats on Sportlytics.">
+    <link rel="stylesheet" href="css/shared.css">
+    <style>
+        .profile-header { text-align:center; padding:3rem 1.5rem 2rem; position:relative; }
+        .profile-header::before { content:''; position:absolute; top:0; left:0; width:100%; height:200px; background:linear-gradient(135deg, rgba(78,222,163,0.15), rgba(76,215,246,0.1)); border-radius:0 0 2rem 2rem; z-index:-1; }
+        .avatar-ring { width:120px; height:120px; border-radius:50%; border:4px solid var(--primary); display:flex; align-items:center; justify-content:center; margin:0 auto 1rem; background:var(--surface-container); box-shadow: 0 0 30px var(--primary-glow); }
+        .stat-card { background:var(--surface-lowest); padding:1.25rem; border-radius:1rem; text-align:center; border:1px solid var(--border); }
+        .stat-card .val { font-size:1.75rem; font-weight:800; color:var(--primary); }
+        .stat-card .lbl { font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em; font-weight:700; margin-top:0.25rem; }
+        .share-btn { position:fixed; bottom:2rem; right:2rem; width:56px; height:56px; border-radius:50%; background:var(--primary); color:#002113; border:none; cursor:pointer; box-shadow:0 4px 20px var(--primary-glow); display:flex; align-items:center; justify-content:center; z-index:50; transition:transform 0.3s; }
+        .share-btn:hover { transform:scale(1.1); }
+    </style>
+</head>
+<body>
+<div class="loading-screen" id="loadingScreen"><div class="loader-spinner"></div><div class="loader-text">SPORTLYTICS</div><div class="loader-sub">Loading Profile</div></div>
+<div class="particles" id="particles"></div>
+<div class="toast-container" id="toastContainer"></div>
+
+<nav style="width:100%;height:64px;position:sticky;top:0;z-index:50;background:rgba(6,14,32,0.7);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;border-bottom:1px solid var(--border);">
+    <a href="index.html" class="font-headline" style="font-size:1.5rem;font-weight:800;color:var(--primary);text-decoration:none;">Sportlytics</a>
+    <div style="display:flex;gap:1.5rem;align-items:center;" id="nav-links">
+        <a href="dashboard.html" style="color:var(--text-muted);font-size:0.85rem;text-decoration:none;font-weight:700;">Dashboard</a>
+        <a href="leaderboard.html" style="color:var(--text-muted);font-size:0.85rem;text-decoration:none;font-weight:700;">Leaderboard</a>
+        <a href="#" id="scout-link" style="color:var(--primary);font-size:0.85rem;text-decoration:none;font-weight:700;display:flex;align-items:center;gap:0.25rem;"><span class="material-symbols-outlined" style="font-size:16px;">analytics</span> Scout Report</a>
+    </div>
+</nav>
+
+<main style="max-width:800px;margin:0 auto;padding:0 1.5rem 3rem;">
+    <div class="profile-header">
+        <div class="avatar-ring"><span class="material-symbols-outlined" style="font-size:4rem;color:var(--primary);" id="avatar-icon">person</span></div>
+        <h1 class="font-headline" style="font-size:2.5rem;font-weight:800;" id="p-name">Athlete</h1>
+        <p style="color:var(--text-muted);margin-top:0.5rem;max-width:400px;margin-left:auto;margin-right:auto;" id="p-bio"></p>
+        <div id="p-team" style="margin-top:0.5rem;display:none;"><span class="badge-chip"><span class="material-symbols-outlined" style="font-size:14px;">groups</span><span id="p-team-name"></span></span></div>
+        <p style="color:var(--text-muted);font-size:0.7rem;margin-top:0.75rem;" id="p-since"></p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:2rem;" id="stats-grid">
+        <div class="stat-card"><div class="val" id="p-score">0</div><div class="lbl">Efficiency Score</div></div>
+        <div class="stat-card"><div class="val" id="p-matches">0</div><div class="lbl">Matches Logged</div></div>
+        <div class="stat-card"><div class="val" id="p-sports">0</div><div class="lbl">Sports Played</div></div>
+        <div class="stat-card"><div class="val" id="p-badges">0</div><div class="lbl">Badges Earned</div></div>
+    </div>
+
+    <!-- Sports -->
+    <div class="card" style="margin-bottom:1.5rem;" id="sports-section">
+        <h3 class="font-headline" style="font-size:1rem;font-weight:800;margin-bottom:1rem;"><span class="material-symbols-outlined" style="color:var(--primary);vertical-align:middle;">sports_and_outdoors</span> Sports</h3>
+        <div id="p-sports-tags" style="display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
+    </div>
+
+    <!-- Badges -->
+    <div class="card" style="margin-bottom:1.5rem;" id="badges-section">
+        <h3 class="font-headline" style="font-size:1rem;font-weight:800;margin-bottom:1rem;"><span class="material-symbols-outlined" style="color:var(--primary);vertical-align:middle;">emoji_events</span> Achievements</h3>
+        <div id="p-badge-list" style="display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
+    </div>
+
+    <!-- Per-Sport Stats -->
+    <div class="card" id="sport-stats-section">
+        <h3 class="font-headline" style="font-size:1rem;font-weight:800;margin-bottom:1rem;"><span class="material-symbols-outlined" style="color:var(--primary);vertical-align:middle;">leaderboard</span> Performance by Sport</h3>
+        <div id="p-sport-stats" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;"></div>
+    </div>
+
+    <!-- Error -->
+    <div id="error-state" class="hidden" style="text-align:center;padding:4rem 2rem;">
+        <span class="material-symbols-outlined" style="font-size:4rem;color:var(--error);">person_off</span>
+        <h2 class="font-headline" style="margin-top:1rem;">Profile Not Found</h2>
+        <p style="color:var(--text-muted);margin-top:0.5rem;" id="error-msg">This profile is private or doesn't exist.</p>
+    </div>
+</main>
+
+<!-- Share FAB -->
+<button class="share-btn" onclick="shareProfile()" title="Share Profile"><span class="material-symbols-outlined" style="font-size:1.5rem;">share</span></button>
+
+<!-- Stats Card Canvas (hidden, for image export) -->
+<canvas id="shareCanvas" width="600" height="400" style="display:none;"></canvas>
+
+<script src="js/shared.js"></script>
+<script>
+    initParticles();
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get('id');
+    let profileData = null;
+
+    async function loadProfile() {
+        if (!userId) { showError('No athlete ID provided.'); hideLoader(); return; }
+        try {
+            const res = await fetch(`${API_URL}/public/profile/${userId}`);
+            const data = await res.json();
+            if (!res.ok) { showError(data.message); hideLoader(); return; }
+            profileData = data;
+            
+            // Set Scout Link
+            document.getElementById('scout-link').href = `scout.html?id=${userId}`;
+            
+            renderProfile(data);
+            hideLoader();
+        } catch (err) { showError('Network error.'); hideLoader(); }
+    }
+
+    function showError(msg) {
+        document.querySelector('main').querySelectorAll(':scope > *:not(#error-state)').forEach(el => el.style.display = 'none');
+        document.getElementById('error-state').classList.remove('hidden');
+        document.getElementById('error-msg').innerText = msg;
+    }
+
+    function renderProfile(d) {
+        document.title = `${d.name} | Sportlytics`;
+        document.getElementById('p-name').innerText = d.name;
+        document.getElementById('p-bio').innerText = d.bio || '';
+        document.getElementById('p-score').innerText = d.efficiencyScore.toFixed(1);
+        document.getElementById('p-matches').innerText = d.totalMatchesLogged || 0;
+        document.getElementById('p-sports').innerText = (d.sports || []).length;
+        document.getElementById('p-badges').innerText = (d.badges || []).length;
+        document.getElementById('p-since').innerText = 'Member since ' + new Date(d.createdAt).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+
+        if (d.team) {
+            document.getElementById('p-team').style.display = 'block';
+            document.getElementById('p-team-name').innerText = d.team.name + ' (' + d.team.sport + ')';
+        }
+
+        // Sports tags
+        const tagsEl = document.getElementById('p-sports-tags');
+        (d.sports || []).forEach(s => {
+            const info = SPORT_OPTIONS.find(o => o.value === s) || { label: s, icon: 'sports' };
+            const c = SPORT_COLORS[s] || '#6b7280';
+            tagsEl.innerHTML += `<span class="sport-tag" style="background:${c}22;color:${c};border:1px solid ${c}44;padding:0.4rem 0.8rem;font-size:0.8rem;"><span class="material-symbols-outlined" style="font-size:16px;">${info.icon}</span>${info.label}</span>`;
+        });
+        if (!d.sports || d.sports.length === 0) tagsEl.innerHTML = '<span style="color:var(--text-muted);font-size:0.85rem;">No sports recorded yet.</span>';
+
+        // Badges
+        const badgeEl = document.getElementById('p-badge-list');
+        (d.badges || []).forEach(b => { badgeEl.innerHTML += `<div class="badge-chip" title="${b.description}"><span class="material-symbols-outlined" style="font-size:16px;">${b.icon}</span>${b.name}</div>`; });
+        if (!d.badges || d.badges.length === 0) badgeEl.innerHTML = '<span style="color:var(--text-muted);font-size:0.85rem;">No badges earned yet.</span>';
+
+        // Per-sport stats
+        const ssEl = document.getElementById('p-sport-stats');
+        if (d.sportStats && typeof d.sportStats === 'object') {
+            const entries = Object.entries(d.sportStats);
+            if (entries.length === 0) { ssEl.innerHTML = '<span style="color:var(--text-muted);font-size:0.85rem;">No detailed stats yet.</span>'; return; }
+            entries.forEach(([sport, data]) => {
+                const c = SPORT_COLORS[sport] || '#6b7280';
+                const info = SPORT_OPTIONS.find(o => o.value === sport) || { label: sport, icon: 'sports' };
+                ssEl.innerHTML += `<div class="card" style="padding:1rem;"><div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;"><span class="material-symbols-outlined" style="color:${c};">${info.icon}</span><span style="font-weight:700;">${info.label}</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;font-size:0.75rem;"><div><span style="color:var(--text-muted);">Matches:</span> <strong>${data.matchCount}</strong></div><div><span style="color:var(--text-muted);">Points:</span> <strong style="color:var(--primary);">${data.totalPoints}</strong></div><div><span style="color:var(--text-muted);">Best:</span> <strong>${data.bestScore}</strong></div><div><span style="color:var(--text-muted);">Avg Effort:</span> <strong>${data.avgEffort}</strong></div></div></div>`;
+            });
+        }
+    }
+
+    // Social sharing — generate stats card image
+    function shareProfile() {
+        if (!profileData) return;
+        const canvas = document.getElementById('shareCanvas');
+        const ctx = canvas.getContext('2d');
+        const d = profileData;
+
+        // Background
+        const grad = ctx.createLinearGradient(0, 0, 600, 400);
+        grad.addColorStop(0, '#0b1326'); grad.addColorStop(1, '#171f33');
+        ctx.fillStyle = grad; ctx.fillRect(0, 0, 600, 400);
+
+        // Accent bar
+        const accent = ctx.createLinearGradient(0, 0, 600, 0);
+        accent.addColorStop(0, '#4edea3'); accent.addColorStop(1, '#4cd7f6');
+        ctx.fillStyle = accent; ctx.fillRect(0, 0, 600, 5);
+
+        // Brand
+        ctx.fillStyle = '#4edea3'; ctx.font = 'bold 14px Inter, sans-serif'; ctx.fillText('SPORTLYTICS', 30, 40);
+        ctx.fillStyle = '#738298'; ctx.font = '10px Inter, sans-serif'; ctx.fillText('ATHLETE STATS CARD', 30, 55);
+
+        // Name
+        ctx.fillStyle = '#dae2fd'; ctx.font = 'bold 32px Inter, sans-serif'; ctx.fillText(d.name, 30, 110);
+
+        // Bio
+        if (d.bio) { ctx.fillStyle = '#738298'; ctx.font = '13px Inter, sans-serif'; ctx.fillText(d.bio.substring(0, 60), 30, 135); }
+
+        // Stats boxes
+        const stats = [
+            { label: 'EFFICIENCY', value: d.efficiencyScore.toFixed(1) },
+            { label: 'MATCHES', value: String(d.totalMatchesLogged || 0) },
+            { label: 'SPORTS', value: String((d.sports || []).length) },
+            { label: 'BADGES', value: String((d.badges || []).length) }
+        ];
+        stats.forEach((s, i) => {
+            const x = 30 + i * 140; const y = 170;
+            ctx.fillStyle = '#060e20'; ctx.beginPath(); ctx.roundRect(x, y, 120, 70, 10); ctx.fill();
+            ctx.strokeStyle = 'rgba(78,222,163,0.2)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.roundRect(x, y, 120, 70, 10); ctx.stroke();
+            ctx.fillStyle = '#4edea3'; ctx.font = 'bold 24px Inter, sans-serif'; ctx.fillText(s.value, x + 15, y + 35);
+            ctx.fillStyle = '#738298'; ctx.font = 'bold 9px Inter, sans-serif'; ctx.fillText(s.label, x + 15, y + 55);
+        });
+
+        // Sports tags
+        let sx = 30;
+        (d.sports || []).forEach(s => {
+            const info = SPORT_OPTIONS.find(o => o.value === s) || { label: s };
+            ctx.fillStyle = 'rgba(78,222,163,0.15)'; ctx.beginPath(); ctx.roundRect(sx, 270, ctx.measureText(info.label).width + 24, 28, 14); ctx.fill();
+            ctx.fillStyle = '#4edea3'; ctx.font = 'bold 11px Inter, sans-serif'; ctx.fillText(info.label, sx + 12, 289);
+            sx += ctx.measureText(info.label).width + 36;
+        });
+
+        // Badges
+        ctx.fillStyle = '#738298'; ctx.font = 'bold 10px Inter, sans-serif'; ctx.fillText('ACHIEVEMENTS', 30, 330);
+        let bx = 30;
+        (d.badges || []).slice(0, 5).forEach(b => {
+            ctx.fillStyle = 'rgba(78,222,163,0.1)'; ctx.beginPath(); ctx.roundRect(bx, 340, ctx.measureText(b.name).width + 20, 24, 12); ctx.fill();
+            ctx.fillStyle = '#4edea3'; ctx.font = '10px Inter, sans-serif'; ctx.fillText(b.name, bx + 10, 356);
+            bx += ctx.measureText(b.name).width + 30;
+        });
+
+        // Footer
+        ctx.fillStyle = '#738298'; ctx.font = '9px Inter, sans-serif'; ctx.fillText('sportlytics.app • Kinetic Precision', 30, 390);
+
+        // Download
+        canvas.toBlob(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `${d.name.replace(/\s+/g, '_')}_sportlytics.png`; a.click();
+            URL.revokeObjectURL(url);
+            showToast('Stats card downloaded!', 'success');
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadProfile);
+</script>
+</body>
+</html>

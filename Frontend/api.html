@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Sportlytics | API Docs</title>
+    <link rel="stylesheet" href="css/shared.css">
+</head>
+<body>
+<div class="particles" id="particles"></div>
+<nav style="width:100%;height:64px;position:sticky;top:0;z-index:50;background:rgba(6,14,32,0.7);backdrop-filter:blur(12px);display:flex;align-items:center;padding:0 2rem;border-bottom:1px solid var(--border);">
+    <a href="index.html" class="font-headline" style="font-size:1.5rem;font-weight:800;color:var(--primary);text-decoration:none;">Sportlytics</a>
+</nav>
+
+<main style="max-width:800px;margin:3rem auto;padding:0 1.5rem;">
+    <h1 class="font-headline" style="font-size:2.5rem;font-weight:800;margin-bottom:1rem;">API Documentation</h1>
+    <div class="card">
+        <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1.5rem;">Sportlytics provides a public API to fetch leaderboard standings and public athlete profiles. Base URL: <code>http://localhost:5000/api</code></p>
+        
+        <h3 style="font-size:1.1rem;font-weight:800;color:var(--primary);margin-bottom:0.5rem">1. Get Public Leaderboard</h3>
+        <p style="color:var(--text-muted);font-size:0.8rem;margin-bottom:0.5rem"><code>GET /public/leaderboard?sport=football</code></p>
+        <pre style="background:var(--surface-lowest);padding:1rem;border-radius:0.5rem;font-size:0.8rem;color:var(--text-muted);border:1px solid var(--border);overflow-x:auto;">
+[
+  {
+    "_id": "user_id_here",
+    "name": "Alex Rivera",
+    "efficiencyScore": 125.4,
+    "totalMatchesLogged": 12,
+    "sports": ["football", "running"]
+  }
+]
+        </pre>
+        
+        <h3 style="font-size:1.1rem;font-weight:800;color:var(--primary);margin-bottom:0.5rem;margin-top:1.5rem">2. Get Public Profile</h3>
+        <p style="color:var(--text-muted);font-size:0.8rem;margin-bottom:0.5rem"><code>GET /public/profile/:userId</code></p>
+        <pre style="background:var(--surface-lowest);padding:1rem;border-radius:0.5rem;font-size:0.8rem;color:var(--text-muted);border:1px solid var(--border);overflow-x:auto;">
+{
+  "_id": "user_id_here",
+  "name": "Alex Rivera",
+  "bio": "Amateur forward.",
+  "efficiencyScore": 125.4,
+  "badges": [{ "name": "First Blood", "icon": "local_fire_department" }]
+}
+        </pre>
+    </div>
+</main>
+<script src="js/shared.js"></script>
+<script>initParticles();</script>
+</body>
+</html>

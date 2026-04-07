@@ -431,9 +431,164 @@ function filterMatches() {
     fetchMatches(sport);
 }
 
+// --- HEAD-TO-HEAD COMPARE ---
+let compareDebounce;
+function initCompareSearch() {
+    const input = document.getElementById('compare-search');
+    const dropdown = document.getElementById('compare-dropdown');
+    if (!input) return;
+
+    input.addEventListener('input', (e) => {
+        clearTimeout(compareDebounce);
+        const q = e.target.value.trim();
+        if (q.length < 2) { dropdown.innerHTML = ''; dropdown.classList.add('hidden'); return; }
+        compareDebounce = setTimeout(async () => {
+            try {
+                const res = await fetch(`${API_URL}/public/search?q=${encodeURIComponent(q)}`);
+                const users = await res.json();
+                dropdown.innerHTML = '';
+                if (users.length > 0) {
+                    users.forEach(u => {
+                        const li = document.createElement('li');
+                        li.style.cssText = 'padding:0.6rem 1rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);transition:background 0.2s;font-size:0.85rem;';
+                        li.onmouseenter = () => li.style.background = 'var(--surface-highest)';
+                        li.onmouseleave = () => li.style.background = 'transparent';
+                        li.innerHTML = `<span style="font-weight:700;">${u.name}</span><span style="color:var(--primary);font-weight:700;">${(u.efficiencyScore||0).toFixed(1)} pts</span>`;
+                        li.onclick = () => { dropdown.classList.add('hidden'); input.value = u.name; loadCompare(u._id); };
+                        dropdown.appendChild(li);
+                    });
+                    dropdown.classList.remove('hidden');
+                } else { dropdown.innerHTML = '<li style="padding:0.6rem;text-align:center;color:var(--text-muted);font-size:0.8rem;">No athletes found</li>'; dropdown.classList.remove('hidden'); }
+            } catch (err) { console.error(err); }
+        }, 300);
+    });
+    document.addEventListener('click', (e) => { if (!input.contains(e.target) && !dropdown.contains(e.target)) dropdown.classList.add('hidden'); });
+}
+
+async function loadCompare(userId) {
+    const container = document.getElementById('compare-result');
+    if (!container) return;
+    container.innerHTML = '<div style="text-align:center;padding:2rem;"><span class="material-symbols-outlined" style="font-size:2rem;color:var(--primary);animation:loaderSpin 0.8s linear infinite;">refresh</span></div>';
+    try {
+        const res = await fetch(`${API_URL}/user/compare/${userId}`, { headers: { 'x-auth-token': getToken() } });
+        if (!res.ok) { container.innerHTML = '<p style="color:var(--error);text-align:center;">Could not load comparison.</p>'; return; }
+        const { me, them } = await res.json();
+        renderCompare(me, them);
+    } catch (err) { container.innerHTML = '<p style="color:var(--error);text-align:center;">Network error.</p>'; }
+}
+
+function renderCompare(me, them) {
+    const container = document.getElementById('compare-result');
+    const metrics = [
+        { label: 'Efficiency Score', meVal: me.efficiencyScore, themVal: them.efficiencyScore },
+        { label: 'Total Matches', meVal: me.totalMatches, themVal: them.totalMatches },
+        { label: 'Win Rate', meVal: me.winRate, themVal: them.winRate, suffix: '%' },
+        { label: 'Wins', meVal: me.wins, themVal: them.wins },
+        { label: 'Avg Points/Match', meVal: me.avgPoints, themVal: them.avgPoints },
+        { label: 'Best Match', meVal: me.bestMatch, themVal: them.bestMatch },
+        { label: 'Badges', meVal: me.badges, themVal: them.badges },
+        { label: 'Sports Played', meVal: me.sports.length, themVal: them.sports.length },
+    ];
+
+    let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding:0 0.5rem;">
+        <div style="text-align:left;"><div style="font-size:1.2rem;font-weight:800;color:var(--primary);">${me.name}</div><div style="font-size:0.7rem;color:var(--text-muted);">YOU</div></div>
+        <span class="material-symbols-outlined" style="font-size:2rem;color:var(--text-muted);">compare_arrows</span>
+        <div style="text-align:right;"><div style="font-size:1.2rem;font-weight:800;color:var(--secondary);">${them.name}</div><div style="font-size:0.7rem;color:var(--text-muted);">OPPONENT</div></div>
+    </div>`;
+
+    metrics.forEach(m => {
+        const max = Math.max(m.meVal, m.themVal, 1);
+        const mePct = (m.meVal / max * 100).toFixed(0);
+        const themPct = (m.themVal / max * 100).toFixed(0);
+        const meWin = m.meVal > m.themVal;
+        const suffix = m.suffix || '';
+        html += `<div style="margin-bottom:0.75rem;">
+            <div style="font-size:0.65rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.35rem;text-align:center;">${m.label}</div>
+            <div style="display:flex;gap:0.5rem;align-items:center;">
+                <span style="width:60px;text-align:right;font-weight:800;font-size:0.85rem;color:${meWin ? 'var(--primary)' : 'var(--text-muted)'};">${m.meVal}${suffix}</span>
+                <div style="flex:1;display:flex;gap:2px;">
+                    <div style="flex:1;display:flex;justify-content:flex-end;"><div style="height:8px;width:${mePct}%;background:var(--primary);border-radius:4px 0 0 4px;transition:width 0.6s;"></div></div>
+                    <div style="flex:1;"><div style="height:8px;width:${themPct}%;background:var(--secondary);border-radius:0 4px 4px 0;transition:width 0.6s;"></div></div>
+                </div>
+                <span style="width:60px;font-weight:800;font-size:0.85rem;color:${!meWin ? 'var(--secondary)' : 'var(--text-muted)'};">${m.themVal}${suffix}</span>
+            </div>
+        </div>`;
+    });
+
+    // View their profile link
+    html += `<div style="text-align:center;margin-top:1rem;"><a href="profile.html?id=${them.id}" style="color:var(--secondary);font-size:0.8rem;font-weight:700;text-decoration:none;">View ${them.name}'s Public Profile →</a></div>`;
+    container.innerHTML = html;
+}
+
+// --- SOCIAL SHARING (Stats Card) ---
+function generateShareCard() {
+    if (!currentStats) { showToast('Load your stats first!', 'info'); return; }
+    const canvas = document.getElementById('shareCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const o = currentStats.overview;
+    const user = { name: document.getElementById('user-display-name').innerText, score: o.efficiencyScore, matches: o.totalMatches, winRate: o.winRate, wins: o.wins, badges: currentStats.badges?.length || 0 };
+
+    // Background
+    const grad = ctx.createLinearGradient(0, 0, 600, 400);
+    grad.addColorStop(0, '#0b1326'); grad.addColorStop(1, '#171f33');
+    ctx.fillStyle = grad; ctx.fillRect(0, 0, 600, 400);
+
+    // Top accent
+    const accent = ctx.createLinearGradient(0, 0, 600, 0);
+    accent.addColorStop(0, '#4edea3'); accent.addColorStop(1, '#4cd7f6');
+    ctx.fillStyle = accent; ctx.fillRect(0, 0, 600, 5);
+
+    // Brand
+    ctx.fillStyle = '#4edea3'; ctx.font = 'bold 14px sans-serif'; ctx.fillText('SPORTLYTICS', 30, 40);
+    ctx.fillStyle = '#738298'; ctx.font = '10px sans-serif'; ctx.fillText('ATHLETE PERFORMANCE CARD', 30, 55);
+
+    // Name
+    ctx.fillStyle = '#dae2fd'; ctx.font = 'bold 32px sans-serif'; ctx.fillText(user.name, 30, 110);
+
+    // Stats boxes
+    const stats = [
+        { label: 'SCORE', value: user.score.toFixed(1) },
+        { label: 'MATCHES', value: String(user.matches) },
+        { label: 'WIN RATE', value: user.winRate + '%' },
+        { label: 'BADGES', value: String(user.badges) }
+    ];
+    stats.forEach((s, i) => {
+        const x = 30 + i * 140; const y = 150;
+        ctx.fillStyle = '#060e20'; ctx.beginPath(); ctx.roundRect(x, y, 120, 70, 10); ctx.fill();
+        ctx.strokeStyle = 'rgba(78,222,163,0.2)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.roundRect(x, y, 120, 70, 10); ctx.stroke();
+        ctx.fillStyle = '#4edea3'; ctx.font = 'bold 24px sans-serif'; ctx.fillText(s.value, x + 15, y + 35);
+        ctx.fillStyle = '#738298'; ctx.font = 'bold 9px sans-serif'; ctx.fillText(s.label, x + 15, y + 55);
+    });
+
+    // Sport breakdown
+    ctx.fillStyle = '#738298'; ctx.font = 'bold 10px sans-serif'; ctx.fillText('SPORT BREAKDOWN', 30, 270);
+    let sx = 30;
+    Object.entries(currentStats.sportBreakdown || {}).forEach(([sport, data]) => {
+        const info = SPORT_OPTIONS.find(o => o.value === sport) || { label: sport };
+        const label = `${info.label}: ${data.count} matches`;
+        const w = ctx.measureText(label).width + 24;
+        ctx.fillStyle = 'rgba(78,222,163,0.12)'; ctx.beginPath(); ctx.roundRect(sx, 280, w, 26, 13); ctx.fill();
+        ctx.fillStyle = '#4edea3'; ctx.font = 'bold 10px sans-serif'; ctx.fillText(label, sx + 12, 297);
+        sx += w + 10;
+    });
+
+    // Footer
+    ctx.fillStyle = '#738298'; ctx.font = '9px sans-serif'; ctx.fillText('sportlytics.app • Generated ' + new Date().toLocaleDateString(), 30, 390);
+
+    canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url;
+        a.download = `${user.name.replace(/\s+/g, '_')}_sportlytics_card.png`; a.click();
+        URL.revokeObjectURL(url);
+        showToast('Stats card downloaded! Share it anywhere 🚀', 'success');
+    });
+}
+
 // --- Init on Load ---
 document.addEventListener('DOMContentLoaded', () => {
     initParticles();
     initDashboard();
     initProSearch();
+    initCompareSearch();
 });

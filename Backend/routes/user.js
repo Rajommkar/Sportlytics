@@ -383,4 +383,45 @@ router.delete('/goals/:goalId', auth, async (req, res) => {
     }
 });
 
+// ============================================
+// HEAD-TO-HEAD COMPARE
+// ============================================
+
+// Helper to build compare data for a user
+async function buildCompareData(userId) {
+    const user = await User.findById(userId).select('-password');
+    if (!user) return null;
+    const matches = await Match.find({ user: userId });
+    const total = matches.length;
+    const wins = matches.filter(m => m.result === 'win').length;
+    const losses = matches.filter(m => m.result === 'loss').length;
+    const winRate = total > 0 ? parseFloat(((wins / total) * 100).toFixed(1)) : 0;
+    const avgEffort = total > 0 ? parseFloat((matches.reduce((s, m) => s + m.effort, 0) / total).toFixed(1)) : 0;
+    const avgPoints = total > 0 ? parseFloat((matches.reduce((s, m) => s + m.pointsEarned, 0) / total).toFixed(1)) : 0;
+    const bestMatch = total > 0 ? Math.max(...matches.map(m => m.pointsEarned)) : 0;
+    
+    return {
+        id: user._id, name: user.name, efficiencyScore: user.efficiencyScore,
+        totalMatches: user.totalMatchesLogged, sports: user.sports, badges: user.badges.length,
+        wins, losses, winRate, avgEffort, avgPoints, bestMatch,
+        memberSince: user.createdAt
+    };
+}
+
+// @route   GET /api/user/compare/:userId
+// @desc    Head-to-head comparison between current user and another
+router.get('/compare/:userId', auth, async (req, res) => {
+    try {
+        const [me, them] = await Promise.all([
+            buildCompareData(req.user.id),
+            buildCompareData(req.params.userId)
+        ]);
+        if (!them) return res.status(404).json({ message: 'Athlete not found' });
+        res.json({ me, them });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;
