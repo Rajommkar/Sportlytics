@@ -2,15 +2,19 @@
 
 Elite Amateur Performance Analytics Platform.
 
-**Live Link**: [Deploy on Vercel to get your link]
+[![Launch Status](https://img.shields.io/badge/Launch-Live_Tunnel-4edea3?style=for-the-badge)](https://beige-dogs-take.loca.lt)
+[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FRajommkar%2FSportlytics&env=MONGO_URI,JWT_SECRET)
 
-## 🌐 Deployment
-This project is production-ready and configured for **Vercel**. 
+## 🌐 Instant Access
+The platform is currently live via a secure tunnel for review:
+👉 **[Live Demo](https://beige-dogs-take.loca.lt)**
 
-To go live:
-1. Import this repo into Vercel.
-2. Add `MONGO_URI` and `JWT_SECRET` to Environment Variables.
-3. Deploy!
+## ☁️ One-Click Cloud Deployment
+To move this project to a permanent cloud host (Vercel):
+1. Click the **"Deploy"** button above.
+2. Sign in with GitHub.
+3. Add your `MONGO_URI` and `JWT_SECRET` when prompted.
+4. **Done!** Your professional analytics platform will be live on your own domain.
 
 ## 📊 Core Features
 
