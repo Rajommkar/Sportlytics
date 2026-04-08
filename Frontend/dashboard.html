@@ -19,8 +19,8 @@
     </style>
 </head>
 <body>
-<!-- Loading Screen -->
-<div class="loading-screen" id="loadingScreen">
+<!-- Loading Screen removed in favor of Skeleton UI -->
+<div class="loading-screen hidden" id="loadingScreen">
     <div class="loader-spinner"></div>
     <div class="loader-text">SPORTLYTICS</div>
     <div class="loader-sub">Loading Dashboard</div>
@@ -69,24 +69,30 @@
         <!-- Profile Card -->
         <div class="card animate-on-scroll">
             <h2 class="font-headline" style="font-size:1.25rem;font-weight:800;margin-bottom:1rem;">My Performance</h2>
-            <div class="stat-value" style="font-size:3rem;" id="dash-score">0.0</div>
+            <div class="stat-value" style="font-size:3rem;display:flex;align-items:center;height:3.5rem;" id="dash-score"><div class="skeleton-box" style="height:3rem;width:100px;border-radius:0.5rem;"></div></div>
             <div class="label" style="margin-bottom:1rem;">Efficiency Score</div>
             <div style="background:var(--surface-highest);padding:0.75rem 1rem;border-radius:0.75rem;display:flex;justify-content:space-between;align-items:center;">
                 <span style="font-size:0.85rem;font-weight:700;">Matches Logged</span>
-                <span style="font-size:1.1rem;font-weight:800;color:var(--primary);" id="dash-matches">0</span>
+                <span style="font-size:1.1rem;font-weight:800;color:var(--primary);display:block;height:1.2rem;" id="dash-matches"><div class="skeleton-box" style="height:1.2rem;width:30px;display:inline-block;border-radius:0.25rem;"></div></span>
             </div>
         </div>
 
         <!-- Badges -->
         <div class="card animate-on-scroll" style="transition-delay:50ms;">
             <h3 class="font-headline" style="font-size:1rem;font-weight:800;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem;"><span class="material-symbols-outlined" style="color:var(--primary);">emoji_events</span>Badges</h3>
-            <div id="badges-container" style="display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
+            <div id="badges-container" style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+                <div class="skeleton-box" style="width:100px;height:26px;border-radius:9999px;"></div>
+                <div class="skeleton-box" style="width:120px;height:26px;border-radius:9999px;"></div>
+            </div>
         </div>
 
         <!-- Goals -->
         <div class="card animate-on-scroll" style="transition-delay:100ms;">
             <h3 class="font-headline" style="font-size:1rem;font-weight:800;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem;"><span class="material-symbols-outlined" style="color:var(--primary);">flag</span>Goals</h3>
-            <div id="goals-container"></div>
+            <div id="goals-container">
+                <div class="skeleton-box" style="height:40px;border-radius:0.5rem;margin-bottom:0.5rem;"></div>
+                <div class="skeleton-box" style="height:40px;border-radius:0.5rem;margin-bottom:0.5rem;"></div>
+            </div>
             <form onsubmit="handleAddGoal(event)" style="margin-top:1rem;display:flex;flex-direction:column;gap:0.5rem;border-top:1px solid var(--border);padding-top:1rem;">
                 <input type="text" id="goal-title" class="input" placeholder="Goal title (e.g., Reach 100 points)" required>
                 <div style="display:flex;gap:0.5rem;">
@@ -100,7 +106,9 @@
         <!-- Team -->
         <div class="card animate-on-scroll" style="transition-delay:150ms;">
             <h3 class="font-headline" style="font-size:1rem;font-weight:800;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem;"><span class="material-symbols-outlined" style="color:var(--primary);">groups</span>My Team</h3>
-            <div id="team-container"></div>
+            <div id="team-container">
+                <div class="skeleton-box" style="height:60px;border-radius:0.5rem;"></div>
+            </div>
         </div>
     </div>
 
@@ -153,19 +161,22 @@
         <div class="card animate-on-scroll" style="transition-delay:250ms;">
             <h3 class="font-headline" style="font-size:1.1rem;font-weight:800;margin-bottom:1rem;"><span class="material-symbols-outlined" style="color:var(--primary);vertical-align:middle;">analytics</span> Analytics Overview</h3>
             <div class="analytics-grid">
-                <div class="stat-box"><div class="val" id="stat-winrate">0%</div><div class="lbl">Win Rate</div></div>
-                <div class="stat-box"><div class="val result-win" id="stat-wins">0</div><div class="lbl">Wins</div></div>
-                <div class="stat-box"><div class="val result-loss" id="stat-losses">0</div><div class="lbl">Losses</div></div>
-                <div class="stat-box"><div class="val result-draw" id="stat-draws">0</div><div class="lbl">Draws</div></div>
-                <div class="stat-box"><div class="val" id="stat-avg-points">0</div><div class="lbl">Avg Points</div></div>
-                <div class="stat-box"><div class="val" id="stat-avg-effort">0</div><div class="lbl">Avg Effort</div></div>
+                <div class="stat-box"><div class="val" id="stat-winrate" style="height:1.8rem;"><div class="skeleton-box" style="height:1.5rem;width:80%;margin:0.15rem auto;border-radius:0.25rem;"></div></div><div class="lbl">Win Rate</div></div>
+                <div class="stat-box"><div class="val result-win" id="stat-wins" style="height:1.8rem;"><div class="skeleton-box" style="height:1.5rem;width:60%;margin:0.15rem auto;border-radius:0.25rem;"></div></div><div class="lbl">Wins</div></div>
+                <div class="stat-box"><div class="val result-loss" id="stat-losses" style="height:1.8rem;"><div class="skeleton-box" style="height:1.5rem;width:60%;margin:0.15rem auto;border-radius:0.25rem;"></div></div><div class="lbl">Losses</div></div>
+                <div class="stat-box"><div class="val result-draw" id="stat-draws" style="height:1.8rem;"><div class="skeleton-box" style="height:1.5rem;width:60%;margin:0.15rem auto;border-radius:0.25rem;"></div></div><div class="lbl">Draws</div></div>
+                <div class="stat-box"><div class="val" id="stat-avg-points" style="height:1.8rem;"><div class="skeleton-box" style="height:1.5rem;width:60%;margin:0.15rem auto;border-radius:0.25rem;"></div></div><div class="lbl">Avg Points</div></div>
+                <div class="stat-box"><div class="val" id="stat-avg-effort" style="height:1.8rem;"><div class="skeleton-box" style="height:1.5rem;width:60%;margin:0.15rem auto;border-radius:0.25rem;"></div></div><div class="lbl">Avg Effort</div></div>
             </div>
         </div>
 
         <!-- Sport Breakdown -->
         <div class="card animate-on-scroll" style="transition-delay:300ms;">
             <h3 class="font-headline" style="font-size:1.1rem;font-weight:800;margin-bottom:1rem;"><span class="material-symbols-outlined" style="color:var(--primary);vertical-align:middle;">leaderboard</span> Sport Breakdown</h3>
-            <div id="sport-breakdown" class="sport-breakdown-grid"></div>
+            <div id="sport-breakdown" class="sport-breakdown-grid">
+                <div class="skeleton-box" style="height:80px;border-radius:0.75rem;"></div>
+                <div class="skeleton-box" style="height:80px;border-radius:0.75rem;"></div>
+            </div>
         </div>
 
         <!-- Performance Chart -->
@@ -189,7 +200,11 @@
             <div style="overflow-x:auto;">
                 <table class="data-table">
                     <thead><tr><th>Date</th><th>Sport</th><th>Match</th><th>Result</th><th>Points</th><th>Time</th></tr></thead>
-                    <tbody id="match-history-body"><tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:2rem;">Loading...</td></tr></tbody>
+                    <tbody id="match-history-body">
+                        <tr><td colspan="6" style="padding: 1rem;"><div class="skeleton-box skeleton-text"></div></td></tr>
+                        <tr><td colspan="6" style="padding: 1rem;"><div class="skeleton-box skeleton-text"></div></td></tr>
+                        <tr><td colspan="6" style="padding: 1rem;"><div class="skeleton-box skeleton-text"></div></td></tr>
+                    </tbody>
                 </table>
             </div>
         </div>

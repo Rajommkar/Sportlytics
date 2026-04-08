@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Sportlytics | Page Skeleton</title>
+    <meta name="description" content="Base skeleton page template for Sportlytics dashboard">
+    <link rel="stylesheet" href="css/shared.css">
+    <style>
+        .page-grid { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 1.5rem; 
+            max-width: 1280px; 
+            margin: 0 auto; 
+            padding: 2rem 1.5rem; 
+        }
+        @media(min-width:768px) { 
+            .page-grid { grid-template-columns: 350px 1fr; } 
+        }
+        
+        .skeleton-header { height: 2rem; width: 60%; margin-bottom: 1.5rem; }
+    </style>
+</head>
+<body>
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu hidden" id="mobileMenu">
+    <button onclick="toggleMobileMenu()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text);cursor:pointer;">
+        <span class="material-symbols-outlined" style="font-size:2rem;">close</span>
+    </button>
+    <a href="index.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="leaderboard.html">Leaderboard</a>
+</div>
+
+<!-- Nav -->
+<nav style="width:100%;height:64px;position:sticky;top:0;z-index:50;background:rgba(6,14,32,0.7);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;border-bottom:1px solid var(--border);">
+    <div style="display:flex;align-items:center;gap:2rem;">
+        <a href="index.html" class="font-headline" style="font-size:1.5rem;font-weight:800;color:var(--primary);text-decoration:none;letter-spacing:-0.05em;">Sportlytics</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:1rem;">
+        <button onclick="toggleMobileMenu()" class="mobile-nav-btn" style="background:none;border:none;color:var(--text);cursor:pointer;display:block;">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+    </div>
+</nav>
+<style>
+    @media(min-width:768px) { .mobile-nav-btn { display:none !important; } }
+</style>
+
+<main class="page-grid">
+    <!-- LEFT COLUMN SKELETON -->
+    <div style="display:flex;flex-direction:column;gap:1.5rem;">
+        
+        <div class="card">
+            <div class="skeleton-box skeleton-text skeleton-header"></div>
+            <div style="display:flex; align-items:center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="skeleton-box skeleton-avatar"></div>
+                <div style="flex:1;">
+                    <div class="skeleton-box skeleton-text"></div>
+                    <div class="skeleton-box skeleton-text short"></div>
+                </div>
+            </div>
+            <div class="skeleton-box" style="height: 100px; border-radius: 0.75rem;"></div>
+        </div>
+
+        <div class="card">
+            <div class="skeleton-box skeleton-text skeleton-header short"></div>
+            <div style="display:flex; flex-wrap: wrap; gap: 0.5rem;">
+                <div class="skeleton-box" style="width: 80px; height: 30px; border-radius: 9999px;"></div>
+                <div class="skeleton-box" style="width: 100px; height: 30px; border-radius: 9999px;"></div>
+                <div class="skeleton-box" style="width: 60px; height: 30px; border-radius: 9999px;"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN SKELETON -->
+    <div style="display:flex;flex-direction:column;gap:1.5rem;">
+        
+        <div class="card">
+            <div class="skeleton-box skeleton-text skeleton-header"></div>
+            
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
+                <div>
+                   <div style="width: 50px; margin-bottom: 0.25rem;" class="skeleton-box skeleton-text"></div>
+                   <div class="skeleton-box" style="height: 40px; border-radius: 0.75rem;"></div>
+                </div>
+                <div>
+                   <div style="width: 50px; margin-bottom: 0.25rem;" class="skeleton-box skeleton-text"></div>
+                   <div class="skeleton-box" style="height: 40px; border-radius: 0.75rem;"></div>
+                </div>
+                <div style="grid-column: span 2;">
+                   <div style="width: 80px; margin-bottom: 0.25rem;" class="skeleton-box skeleton-text"></div>
+                   <div class="skeleton-box" style="height: 40px; border-radius: 0.75rem;"></div>
+                </div>
+            </div>
+            
+            <div class="skeleton-box" style="height: 45px; border-radius: 0.75rem; width: 100%;"></div>
+        </div>
+
+        <div class="card">
+            <div class="skeleton-box skeleton-text skeleton-header short"></div>
+            <div class="skeleton-box" style="height: 250px; border-radius: 0.75rem;"></div>
+        </div>
+
+    </div>
+</main>
+
+<script src="js/shared.js"></script>
+</body>
+</html>
