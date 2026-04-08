@@ -35,7 +35,7 @@ describe('Auth Endpoints', () => {
                 password: 'password123A'
             });
             
-        expect(res.statusCode).toEqual(200);
+        expect(res.statusCode).toEqual(201);
         expect(res.body).toHaveProperty('token');
         expect(res.body.user).toHaveProperty('name', 'Test Athlete');
     });

@@ -69,6 +69,12 @@ async function initDashboard() {
         document.getElementById('dash-score').innerText = user.efficiencyScore.toFixed(1);
         document.getElementById('dash-matches').innerText = user.totalMatchesLogged || 0;
 
+        // Set Tier 2 dynamic links
+        const myProfileLink = document.getElementById('my-profile-link');
+        const myScoutLink = document.getElementById('my-scout-link');
+        if (myProfileLink) myProfileLink.href = `profile.html?id=${user._id}`;
+        if (myScoutLink) myScoutLink.href = `scout.html?id=${user._id}`;
+
         renderBadges(user.badges || []);
         renderGoals(user.goals || []);
         fetchMatches();
