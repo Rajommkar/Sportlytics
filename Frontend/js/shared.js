@@ -1,5 +1,8 @@
 // === Sportlytics Shared Utilities ===
-const API_URL = 'http://127.0.0.1:5000/api';
+const API_URL = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1') 
+    ? 'http://127.0.0.1:5000/api' 
+    : `${window.location.origin}/api`;
+
 
 const SPORT_OPTIONS = [
     { value: 'football', label: 'Football', icon: 'sports_soccer' },
