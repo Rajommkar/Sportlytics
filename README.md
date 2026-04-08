@@ -1,14 +1,18 @@
-# ⚡ Sportlytics
+# Sportlytics 🚀
 
-![Sportlytics Banner](https://img.shields.io/badge/Status-Beta-success?style=for-the-badge) ![NodeJS](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white) ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white) ![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+Elite Amateur Performance Analytics Platform.
 
-**Sportlytics** is a professional-grade, full-stack sports analytics ecosystem and digital scorecard platform built for amateur athletes, recreational teams, and prospective scouts. 
+**Live Link**: [Deploy on Vercel to get your link]
 
-It takes the complex, data-driven analytical insights usually reserved for professional leagues and democratizes them, providing everyday athletes with a centralized hub for tracking progression, tracking custom metrics across 10+ sports, comparing statistics, and sharing performance portfolios.
+## 🌐 Deployment
+This project is production-ready and configured for **Vercel**. 
 
----
+To go live:
+1. Import this repo into Vercel.
+2. Add `MONGO_URI` and `JWT_SECRET` to Environment Variables.
+3. Deploy!
 
-## 🎯 Core Features
+## 📊 Core Features
 
 ### 📊 Digital Scorecard & Performance Analytics
 - **Dynamic Sport Schemas:** Logs detailed, sport-specific context (e.g., Strike Rate in Cricket, Pass Accuracy in Football, Serve % in Tennis, Pace in Running).
