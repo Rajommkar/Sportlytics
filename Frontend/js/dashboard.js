@@ -138,7 +138,10 @@ async function handleLogMatch(e) {
             fetchMatches();
             fetchStats();
         } else { showToast(data.message || 'Failed to log', 'error'); }
-    } catch (err) { showToast('Network error', 'error'); }
+    } catch (err) { 
+        console.error('Match Log Error:', err);
+        showToast('Network error', 'error'); 
+    }
 }
 
 // --- Fetch & Render Matches ---

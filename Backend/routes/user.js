@@ -179,12 +179,14 @@ router.post('/log', auth, async (req, res) => {
         }
 
         // Update per-sport stats
+        if (!user.sportStats) user.sportStats = new Map();
         const sportStat = user.sportStats.get(sport) || { matchCount: 0, totalPoints: 0, avgEffort: 0, bestScore: 0 };
         sportStat.matchCount += 1;
         sportStat.totalPoints = parseFloat((sportStat.totalPoints + pointsEarned).toFixed(1));
         sportStat.avgEffort = parseFloat(((sportStat.avgEffort * (sportStat.matchCount - 1) + effort) / sportStat.matchCount).toFixed(1));
         if (pointsEarned > sportStat.bestScore) sportStat.bestScore = pointsEarned;
         user.sportStats.set(sport, sportStat);
+        user.markModified('sportStats');
 
         // Check for new badges
         const newBadges = checkAndAwardBadges(user);

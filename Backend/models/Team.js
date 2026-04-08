@@ -36,11 +36,10 @@ const teamSchema = new mongoose.Schema({
 });
 
 // Auto-generate invite code before first save
-teamSchema.pre('save', function(next) {
+teamSchema.pre('save', async function() {
     if (!this.inviteCode) {
         this.inviteCode = this.name.substring(0, 3).toUpperCase() + '-' + Math.random().toString(36).substring(2, 7).toUpperCase();
     }
-    next();
 });
 
 const Team = mongoose.model('Team', teamSchema);

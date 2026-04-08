@@ -12,7 +12,11 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'x-auth-token']
+}));
 app.use(express.json({ extended: false }));
 
 // Simple rate limiting for auth routes (in-memory, sufficient for dev/small scale)

@@ -138,7 +138,7 @@ const matchSchema = new mongoose.Schema({
 });
 
 // Auto-calculate some derived metrics before saving
-matchSchema.pre('save', function(next) {
+matchSchema.pre('save', async function() {
     if (this.sport === 'cricket' && this.cricketStats) {
         if (this.cricketStats.ballsFaced > 0) {
             this.cricketStats.strikeRate = parseFloat(((this.cricketStats.runsScored / this.cricketStats.ballsFaced) * 100).toFixed(2));
@@ -147,10 +147,6 @@ matchSchema.pre('save', function(next) {
             this.cricketStats.economyRate = parseFloat((this.cricketStats.runsConceded / this.cricketStats.oversBowled).toFixed(2));
         }
     }
-    if (this.sport === 'basketball' && this.basketballStats) {
-        // Field goal percentage calculated on-the-fly in frontend
-    }
-    next();
 });
 
 const Match = mongoose.model('Match', matchSchema);
